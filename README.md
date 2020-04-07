@@ -6,6 +6,9 @@ Create a system illustrating the utility of Blockchain to maintain criminal case
 2. Everyone involved is accountable as chain of events is available. Any lapse of duty such as improper documentation, loss of evidence, etc can be determined and corrected.
 3. Courts can be granted permission to invoke queries relating to fetching the evidence for a particular case.
 
+## Architecture
+![architecture.png](https://github.com/samarthtambad/blockchain-for-law-enforcement/blob/master/docs/architecture.png)
+
 ## References
 1. https://www.dhs.gov/sites/default/files/publications/2018_AEP_Blockchain_and_Suitability_for_Government_Applications.pdf
 2. https://gcn.com/articles/2019/04/17/blockchain-public-safety.aspx
