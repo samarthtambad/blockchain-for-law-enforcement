@@ -118,3 +118,32 @@ Organizations:
             - Host: peer0.njsp.justice.com
               Port: 7051
 
+    - &JudiciaryOrg
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: JudiciaryOrgMSP
+
+        # ID to load the MSP definition as
+        ID: JudiciaryOrgMSP
+
+        MSPDir: crypto-config/peerOrganizations/judiciary.justice.com/msp
+
+        # Policies for reading, writing, configuration
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('JudiciaryOrgMSP.admin', 'JudiciaryOrgMSP.peer', 'JudiciaryOrgMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('JudiciaryOrgMSP.admin', 'JudiciaryOrgMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('JudiciaryOrgMSP.admin')"
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.judiciary.justice.com
+              Port: 7051
+
