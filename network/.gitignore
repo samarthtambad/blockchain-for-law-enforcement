@@ -1,0 +1,6 @@
+# generated config files, cryptographic material and logs
+docker-compose-e2e.yaml
+channel-artifacts
+crypto-config
+client-certs
+logs
