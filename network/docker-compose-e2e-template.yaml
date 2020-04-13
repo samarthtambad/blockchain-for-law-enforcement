@@ -61,4 +61,21 @@ services:
     networks:
       - justice
 
+  judiciary-ca:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-judiciary
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.judiciary.justice.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/JUDICIARY_CA_PRIVATE_KEY
+    ports:
+      - "10054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.judiciary.justice.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/JUDICIARY_CA_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/judiciary.justice.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerJudiciaryOrg
+    networks:
+      - justice
+
   
