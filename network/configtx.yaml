@@ -60,4 +60,32 @@ Organizations:
             - Host: peer0.fbi.justice.com
               Port: 7051
 
-        
+    - &NYPDOrg
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: NYPDOrgMSP
+
+        # ID to load the MSP definition as
+        ID: NYPDOrgMSP
+
+        MSPDir: crypto-config/peerOrganizations/nypd.justice.com/msp
+
+        # Policies for reading, writing, configuration
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('NYPDOrgMSP.admin', 'NYPDOrgMSP.peer', 'NYPDOrgMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('NYPDOrgMSP.admin', 'NYPDOrgMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('NYPDOrgMSP.admin')"
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.nypd.justice.com
+              Port: 7051
+
