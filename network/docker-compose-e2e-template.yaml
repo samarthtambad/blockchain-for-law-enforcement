@@ -78,4 +78,42 @@ services:
     networks:
       - justice
 
+  orderer.justice.com:
+    extends:
+      file: base/docker-compose-base.yaml
+      service: orderer.justice.com
+    container_name: orderer.justice.com
+    networks:
+      - justice
+    
+  peer0.fbi.justice.com:
+    container_name: peer0.fbi.justice.com
+    extends:
+      file: base/docker-compose-base.yaml
+      service: peer0.fbi.justice.com
+    networks:
+      - justice
   
+  peer0.nypd.justice.com:
+    container_name: peer0.nypd.justice.com
+    extends:
+      file: base/docker-compose-base.yaml
+      service: peer0.nypd.justice.com
+    networks:
+      - justice
+  
+  peer0.njsp.justice.com:
+    container_name: peer0.njsp.justice.com
+    extends:
+      file: base/docker-compose-base.yaml
+      service: peer0.njsp.justice.com
+    networks:
+      - justice
+  
+  peer0.judiciary.justice.com:
+    container_name: peer0.judiciary.justice.com
+    extends:
+      file: base/docker-compose-base.yaml
+      service: peer0.judiciary.justice.com
+    networks:
+      - justice
