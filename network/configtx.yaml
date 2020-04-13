@@ -317,3 +317,41 @@ Capabilities:
         V1_4_2: true
         V1_2: false
 
+################################################################################
+#
+#   Profile
+#
+#   - Different configuration profiles may be encoded here to be specified
+#   as parameters to the configtxgen tool
+#
+################################################################################
+Profiles:
+
+    FourOrgsCaseOrdererGenesis:
+        <<: *ChannelDefaults
+        Capabilities:
+            <<: *ChannelCapabilities
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *CaseOrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            JusticeConsortium:
+                Organizations:
+                    - *FBIOrg
+                    - *NYPDOrg
+                    - *NJSPOrg
+                    - *JudiciaryOrg
+    FourOrgsCaseChannel:
+        Consortium: JusticeConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *FBIOrg
+                - *NYPDOrg
+                - *NJSPOrg
+                - *JudiciaryOrg
+            Capabilities:
+                <<: *ApplicationCapabilities
