@@ -1,0 +1,9 @@
+version: '2'
+
+volumes:
+  orderer.justice.com:
+  peer0.fbi.justice.com:
+  peer0.nypd.justice.com:
+  peer0.njsp.justice.com:
+  peer0.judiciary.justice.com:
+
