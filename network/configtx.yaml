@@ -8,8 +8,6 @@
 ################################################################################
 Organizations:
 
-    # SampleOrg defines an MSP using the sampleconfig.  It should never be used
-    # in production but may be used as a template for other definitions
     - &CaseOrdererOrg
         # DefaultOrg defines the organization which is used in the sampleconfig
         # of the fabric.git development environment
@@ -33,4 +31,33 @@ Organizations:
                 Type: Signature
                 Rule: "OR('CaseOrdererMSP.admin')"
 
-    
+    - &FBIOrg
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: FBIOrgMSP
+
+        # ID to load the MSP definition as
+        ID: FBIOrgMSP
+
+        MSPDir: crypto-config/peerOrganizations/fbi.justice.com/msp
+
+        # Policies for reading, writing, configuration
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('FBIOrgMSP.admin', 'FBIOrgMSP.peer', 'FBIOrgMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('FBIOrgMSP.admin', 'FBIOrgMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('FBIOrgMSP.admin')"
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.fbi.justice.com
+              Port: 7051
+
+        
