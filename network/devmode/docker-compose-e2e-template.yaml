@@ -1,0 +1,102 @@
+version: '2'
+
+services:
+  orderer:
+    container_name: orderer
+    image: hyperledger/fabric-orderer
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LISTENADDRESS=orderer
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=CaseOrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp
+      - GRPC_TRACE=all=true,
+      - GRPC_VERBOSITY=debug
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+      - ./crypto-config/ordererOrganizations/justice.com/orderers/orderer.justice.com/msp:/etc/hyperledger/msp
+      - ./channel-artifacts/genesis.block:/etc/hyperledger/fabric/genesis.block
+    ports:
+      - 7050:7050
+  
+  peer:
+    container_name: peer
+    image: hyperledger/fabric-peer
+    environment:
+      - CORE_PEER_ID=peer0.devorg.justice.com
+      - CORE_PEER_ADDRESS=peer:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer:7051
+      - CORE_PEER_LOCALMSPID=DevOrgMSP
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/devorg.justice.com/peers/peer0.devorg.justice.com/msp:/etc/hyperledger/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: peer node start --peer-chaincodedev
+    ports:
+      - 7051:7051
+      - 7053:7053
+    depends_on:
+      - orderer
+
+  ca:
+    container_name: ca
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca
+      - FABRIC_CA_SERVER_TLS_ENABLED=false
+    volumes:
+      - ./crypto-config/peerOrganizations/devorg.justice.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.devorg.justice.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/*_sk -b admin:adminpw -d'
+    ports:
+      - "7054:7054"
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-ca-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=peer0.devorg.justice.com
+      - CORE_PEER_ADDRESS=peer:7051
+      - CORE_PEER_LOCALMSPID=DevOrgMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
+    working_dir: /opt/gopath/src/chaincodedev
+    command: /bin/bash -c '/opt/justice/setupChannel.sh'
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/devorg.justice.com/users/Admin@devorg.justice.com/msp:/etc/hyperledger/msp
+        - ./../../chaincode/src/github.com:/opt/gopath/src/chaincodedev/chaincode
+        - ./:/opt/justice
+    depends_on:
+      - orderer
+      - peer
+
+  chaincode:
+    container_name: chaincode
+    image: hyperledger/fabric-ccenv
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=peer0.devorg.justice.com
+      - CORE_PEER_ADDRESS=peer:7051
+      - CORE_PEER_LOCALMSPID=DevOrgMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
+    working_dir: /opt/gopath/src/chaincode
+    command: /bin/bash -c 'cp -r /opt/gopath/src/chaincode_copy/* /opt/gopath/src/chaincode/ && sed -i "s/twc\.testMode = false/twc\.testMode = true/g" /opt/gopath/src/chaincode/case_workflow_v1/caseWorkflow.go && sleep 600000'
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/devorg.justice.com/peers/peer0.devorg.justice.com/msp:/etc/hyperledger/msp
+        - ./../../chaincode/src/github.com:/opt/gopath/src/chaincode_copy
+    depends_on:
+      - orderer
+      - peer
