@@ -61,3 +61,74 @@ function printHelp () {
   echo "	network.sh down"
 }
 
+# Keeps pushd silent
+pushd () {
+    command pushd "$@" > /dev/null
+}
+
+# Keeps popd silent
+popd () {
+    command popd "$@" > /dev/null
+}
+
+# Ask user for confirmation to proceed
+function askProceed () {
+  read -p "Continue? [Y/n] " ans
+  case "$ans" in
+    y|Y|"" )
+      echo "proceeding ..."
+    ;;
+    n|N )
+      echo "exiting..."
+      exit 1
+    ;;
+    * )
+      echo "invalid response"
+      askProceed
+    ;;
+  esac
+}
+
+# Obtain CONTAINER_IDS and remove them
+# TODO Might want to make this optional - could clear other containers
+function clearContainers () {
+  CONTAINER_IDS=$(docker ps -aq)
+  if [ -z "$CONTAINER_IDS" -o "$CONTAINER_IDS" == " " ]; then
+    echo "---- No containers available for deletion ----"
+  else
+    docker rm -f $CONTAINER_IDS
+  fi
+}
+
+# Delete any images that were generated as a part of this setup
+# specifically the following images are often left behind:
+# TODO list generated image naming patterns
+function removeUnwantedImages() {
+  DOCKER_IMAGE_IDS=$(docker images | grep "dev\|none\|test-vp\|peer[0-9]-" | awk '{print $3}')
+  if [ -z "$DOCKER_IMAGE_IDS" -o "$DOCKER_IMAGE_IDS" == " " ]; then
+    echo "---- No images available for deletion ----"
+  else
+    docker rmi -f $DOCKER_IMAGE_IDS
+  fi
+}
+
+# Do some basic sanity checking to make sure that the appropriate versions of fabric
+# binaries/images are available.  In the future, additional checking for the presence
+# of go or other items could be added.
+function checkPrereqs() {
+  # Note, we check configtxlator externally because it does not require a config file, and peer in the
+  # docker image because of FAB-8551 that makes configtxlator return 'development version' in docker
+  LOCAL_VERSION=$(configtxlator version | sed -ne 's/ Version: //p')
+  DOCKER_IMAGE_VERSION=$(docker run --rm hyperledger/fabric-tools:$IMAGETAG peer version | sed -ne 's/ Version: //p'|head -1)
+
+  echo "LOCAL_VERSION=$LOCAL_VERSION"
+  echo "DOCKER_IMAGE_VERSION=$DOCKER_IMAGE_VERSION"
+
+  if [ "$LOCAL_VERSION" != "$DOCKER_IMAGE_VERSION" ] ; then
+     echo "=================== WARNING ==================="
+     echo "  Local fabric binaries and docker images are  "
+     echo "  out of  sync. This may cause problems.       "
+     echo "==============================================="
+  fi
+}
+
