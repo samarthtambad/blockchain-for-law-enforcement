@@ -1,0 +1,36 @@
+################################################################################
+#
+#   Section: Organizations
+#
+#   - This section defines the different organizational identities which will
+#   be referenced later in the configuration.
+#
+################################################################################
+Organizations:
+
+    # SampleOrg defines an MSP using the sampleconfig.  It should never be used
+    # in production but may be used as a template for other definitions
+    - &CaseOrdererOrg
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: CaseOrdererOrg
+
+        # ID to load the MSP definition as
+        ID: CaseOrdererMSP
+
+        # MSPDir is the filesystem path which contains the MSP configuration
+        MSPDir: crypto-config/ordererOrganizations/justice.com/msp
+
+        # Policies for reading, writing, configuration
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('CaseOrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('CaseOrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('CaseOrdererMSP.admin')"
+
+    
