@@ -48,4 +48,46 @@ services:
       - 7053:7053
       - 7055:6060
 
+  peer0.nypd.justice.com:
+    container_name: peer0.nypd.justice.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.nypd.justice.com
+      - CORE_PEER_ADDRESS=peer0.nypd.justice.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.nypd.justice.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.nypd.justice.com:7051
+      - CORE_PEER_LOCALMSPID=NYPDOrgMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/nypd.justice.com/peers/peer0.nypd.justice.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/nypd.justice.com/peers/peer0.nypd.justice.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.nypd.justice.com:/var/hyperledger/production
+    ports:
+      - 8051:7051
+      - 8053:7053
+      - 8055:6060
+
+  peer0.njsp.justice.com:
+    container_name: peer0.njsp.justice.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.njsp.justice.com
+      - CORE_PEER_ADDRESS=peer0.njsp.justice.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.njsp.justice.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.njsp.justice.com:7051
+      - CORE_PEER_LOCALMSPID=NJSPOrgMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/njsp.justice.com/peers/peer0.njsp.justice.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/njsp.justice.com/peers/peer0.njsp.justice.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.njsp.justice.com:/var/hyperledger/production
+    ports:
+      - 9051:7051
+      - 9053:7053
+      - 9055:6060
+
   
