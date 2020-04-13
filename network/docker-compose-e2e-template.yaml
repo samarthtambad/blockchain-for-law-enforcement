@@ -1,0 +1,119 @@
+version: '2'
+
+volumes:
+  orderer.justice.com:
+  peer0.fbi.justice.com:
+  peer0.nypd.justice.com:
+  peer0.njsp.justice.com:
+  peer0.judiciary.justice.com:
+
+networks:
+  justice:
+services:
+  fbi-ca:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-fbi
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.fbi.justice.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/FBI_CA_PRIVATE_KEY
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.fbi.justice.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/FBI_CA_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/fbi.justice.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerFBIOrg
+    networks:
+      - justice
+
+  nypd-ca:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-nypd
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.nypd.justice.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/NYPD_CA_PRIVATE_KEY
+    ports:
+      - "8054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.nypd.justice.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/NYPD_CA_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/nypd.justice.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerNYPDOrg
+    networks:
+      - justice
+
+  njsp-ca:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-njsp
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.njsp.justice.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/NJSP_CA_PRIVATE_KEY
+    ports:
+      - "9054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.njsp.justice.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/NJSP_CA_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/njsp.justice.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerNJSPOrg
+    networks:
+      - justice
+
+  judiciary-ca:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-judiciary
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.judiciary.justice.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/JUDICIARY_CA_PRIVATE_KEY
+    ports:
+      - "10054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.judiciary.justice.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/JUDICIARY_CA_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/judiciary.justice.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerJudiciaryOrg
+    networks:
+      - justice
+
+  orderer.justice.com:
+    extends:
+      file: base/docker-compose-base.yaml
+      service: orderer.justice.com
+    container_name: orderer.justice.com
+    networks:
+      - justice
+    
+  peer0.fbi.justice.com:
+    container_name: peer0.fbi.justice.com
+    extends:
+      file: base/docker-compose-base.yaml
+      service: peer0.fbi.justice.com
+    networks:
+      - justice
+  
+  peer0.nypd.justice.com:
+    container_name: peer0.nypd.justice.com
+    extends:
+      file: base/docker-compose-base.yaml
+      service: peer0.nypd.justice.com
+    networks:
+      - justice
+  
+  peer0.njsp.justice.com:
+    container_name: peer0.njsp.justice.com
+    extends:
+      file: base/docker-compose-base.yaml
+      service: peer0.njsp.justice.com
+    networks:
+      - justice
+  
+  peer0.judiciary.justice.com:
+    container_name: peer0.judiciary.justice.com
+    extends:
+      file: base/docker-compose-base.yaml
+      service: peer0.judiciary.justice.com
+    networks:
+      - justice
