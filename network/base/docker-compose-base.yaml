@@ -90,4 +90,23 @@ services:
       - 9053:7053
       - 9055:6060
 
-  
+  peer0.judiciary.justice.com:
+    container_name: peer0.judiciary.justice.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.judiciary.justice.com
+      - CORE_PEER_ADDRESS=peer0.judiciary.justice.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.judiciary.justice.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.judiciary.justice.com:7051
+      - CORE_PEER_LOCALMSPID=JudiciaryOrgMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/judiciary.justice.com/peers/peer0.judiciary.justice.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/judiciary.justice.com/peers/peer0.judiciary.justice.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.judiciary.justice.com:/var/hyperledger/production
+    ports:
+      - 10051:7051
+      - 10053:7053
+      - 10055:6060
