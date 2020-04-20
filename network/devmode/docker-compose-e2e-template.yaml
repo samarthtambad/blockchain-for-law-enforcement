@@ -120,3 +120,12 @@ services:
     depends_on:
       - orderer
       - peer
+
+  couchdb:
+    container_name: couchdb0
+    image: couchdb:2.3
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=abcd1234
+    ports:
+      - "5984:5984"
