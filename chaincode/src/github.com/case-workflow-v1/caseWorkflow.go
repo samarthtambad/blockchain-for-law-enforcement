@@ -26,10 +26,20 @@ func (c *CaseWorkflowChaincode) Init(stub shim.ChaincodeStubInterface) pb.Respon
 	}
 
 	// Upgrade mode 2: change all the names and case details
-	if len(args) != 8 {
-		err = errors.New(fmt.Sprint("Incorrect number of arguments"))
+	if len(args) != 4 {
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 4: {"+
+			"Police Org 1, "+
+			"Police Org 2, "+
+			"Police Org 3, "+
+			"Judiciary, "+
+			"}. Found %d", len(args)))
 		return shim.Error(err.Error())
 	}
+
+	fmt.Printf("Police Org 1: %s\n", args[0])
+	fmt.Printf("Police Org 2: %s\n", args[1])
+	fmt.Printf("Police Org 3: %s\n", args[2])
+	fmt.Printf("Judiciary: %s\n", args[3])
 
 	return shim.Success(nil)
 }
