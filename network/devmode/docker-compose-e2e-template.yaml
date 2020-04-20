@@ -13,6 +13,10 @@ services:
       - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp
       - GRPC_TRACE=all=true,
       - GRPC_VERBOSITY=debug
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=abcd1234
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: orderer
     volumes:
@@ -32,6 +36,10 @@ services:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_LOGGING_LEVEL=DEBUG
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=abcd1234
     volumes:
         - /var/run/:/host/var/run/
         - ./crypto-config/peerOrganizations/devorg.justice.com/peers/peer0.devorg.justice.com/msp:/etc/hyperledger/msp
@@ -50,6 +58,10 @@ services:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=ca
       - FABRIC_CA_SERVER_TLS_ENABLED=false
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=abcd1234
     volumes:
       - ./crypto-config/peerOrganizations/devorg.justice.com/ca/:/etc/hyperledger/fabric-ca-server-config
     command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.devorg.justice.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/*_sk -b admin:adminpw -d'
@@ -68,6 +80,10 @@ services:
       - CORE_PEER_ADDRESS=peer:7051
       - CORE_PEER_LOCALMSPID=DevOrgMSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=abcd1234
     working_dir: /opt/gopath/src/chaincodedev
     command: /bin/bash -c '/opt/justice/setupChannel.sh'
     volumes:
@@ -91,6 +107,10 @@ services:
       - CORE_PEER_ADDRESS=peer:7051
       - CORE_PEER_LOCALMSPID=DevOrgMSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=abcd1234
     working_dir: /opt/gopath/src/chaincode
     command: /bin/bash -c 'cp -r /opt/gopath/src/chaincode_copy/* /opt/gopath/src/chaincode/ && sed -i "s/twc\.testMode = false/twc\.testMode = true/g" /opt/gopath/src/chaincode/case_workflow_v1/caseWorkflow.go && sleep 600000'
     volumes:
