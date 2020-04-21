@@ -112,7 +112,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=abcd1234
     working_dir: /opt/gopath/src/chaincode
-    command: /bin/bash -c 'cp -r /opt/gopath/src/chaincode_copy/* /opt/gopath/src/chaincode/ && sed -i "s/twc\.testMode = false/twc\.testMode = true/g" /opt/gopath/src/chaincode/case_workflow_v1/caseWorkflow.go && sleep 600000'
+    command: /bin/bash -c 'cp -r /opt/gopath/src/chaincode_copy/* /opt/gopath/src/chaincode/ && sed -i "s/ch\.testMode = false/ch\.testMode = true/g" /opt/gopath/src/chaincode/case_workflow_v1/caseWorkflow.go && sleep 600000'
     volumes:
         - /var/run/:/host/var/run/
         - ./crypto-config/peerOrganizations/devorg.justice.com/peers/peer0.devorg.justice.com/msp:/etc/hyperledger/msp
