@@ -1,0 +1,68 @@
+
+/-----------------------------------------------/
+	First time setup/ launching the network
+/-----------------------------------------------/
+
+## First time for setting up the network. It creates docker_compose_e2e.yaml which specifies how the container ports will be configured
+
+# go to network directory
+cd $GOPATH/src/blockchain-for-law-enforcement/network
+
+# performm setup (if necessary) and launch the containers.
+./network.sh up
+
+# look at list of running containers in docker. There must be 11.
+docker ps
+
+# stop all running containers
+./network.sh down
+
+
+/---------------------------------------/
+	Launching the network in dev mode
+/---------------------------------------/
+
+1. Launching the containers
+---------------------------
+
+# go to network directory
+cd $GOPATH/src/blockchain-for-law-enforcement/network
+
+# close all left-over docker containers (if any), -d true is to specify that it is in dev mode
+./network.sh down -d true
+./network.sh clean -d true
+
+# launch network in dev mode
+./network.sh up -d true
+
+# the file ~/go/src/blockchain-for-law-enforcement/network/devmode/logs/network.log can be examined for more info
+
+
+2. Chaincode container
+----------------------
+
+# connect to the chaincode container
+docker exec -it chaincode bash
+
+# inside chaincode container, go to your chaincode directory
+cd case_workflow_v1
+
+# compile the chaincode
+go build
+
+# run the chaincode, port is 7052, name is tw, version is 0
+CORE_PEER_ADDRESS=peer:7052 CORE_CHAINCODE_ID_NAME=cw:0 ./case_workflow_v1
+
+
+3. CLI container
+----------------
+
+# connect to the cli container
+docker exec -it cli bash
+
+# install the chaincode
+peer chaincode install -p chaincodedev/chaincode/case_workflow_v1 -n cw -v 0
+
+peer chaincode instantiate -n cw -v 0 -c '{"Args":["init"]}' -C justicechannel
+
+peer chaincode invoke -n cw -c '{"Args":["queryTest", ""]}' -C justicechannel
