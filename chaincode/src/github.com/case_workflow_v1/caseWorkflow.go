@@ -142,6 +142,11 @@ func (c *CaseWorkflowChaincode) getCaseInfo(stub shim.ChaincodeStubInterface, ar
 		return shim.Error(jsonResp)
 	}
 
+	if len(caseItemBytes) == 0 {
+		jsonResp = "{\"Error\":\"No record found for " + caseKey + "\"}"
+		return shim.Error(jsonResp)
+	}
+
 	fmt.Printf("Query Response:%s\n", string(caseItemBytes))
 	return shim.Success(caseItemBytes)
 }
