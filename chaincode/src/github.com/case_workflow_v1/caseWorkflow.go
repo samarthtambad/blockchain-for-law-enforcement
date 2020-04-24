@@ -117,6 +117,11 @@ func (c *CaseWorkflowChaincode) registerCase(stub shim.ChaincodeStubInterface, c
 	return shim.Success(nil)
 }
 
+func (c *CaseWorkflowChaincode) getCaseInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	return shim.Success(nil)
+}
+
 func (c *CaseWorkflowChaincode) queryTest(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	//   0
