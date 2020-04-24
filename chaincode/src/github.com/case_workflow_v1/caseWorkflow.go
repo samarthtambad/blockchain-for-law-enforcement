@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
+	"time"
 )
 
 type CaseWorkflowChaincode struct {
@@ -102,7 +103,7 @@ func (c *CaseWorkflowChaincode) registerCase(stub shim.ChaincodeStubInterface, c
 	}
 
 	// generate bytes for case
-	caseItem = &Case{ Id: args[0], Title: args[1], Desc: args[2] }
+	caseItem = &Case{ Id: args[0], Title: args[1], Desc: args[2], CreatedAt: time.Now(), Status: Ongoing}
 	caseItemBytes, err = json.Marshal(caseItem)
 	if err != nil { return shim.Error("Error marshaling case item structure") }
 

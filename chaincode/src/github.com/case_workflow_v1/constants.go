@@ -18,6 +18,6 @@ const (
 
 type CaseStatus int
 const(
-	InTrial CaseStatus = iota
+	Ongoing CaseStatus = iota
 	Closed
 )
