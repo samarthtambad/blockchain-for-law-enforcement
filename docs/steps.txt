@@ -68,6 +68,8 @@ peer chaincode instantiate -n cw -v 0 -c '{"Args":["init"]}' -C justicechannel
 
 # queryTest
 peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"docType\":\"marble\",\"owner\":\"tom\"}}"]}' -C justicechannel
+peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"id\":\"case#1\"}}"]}' -C justicechannel
+peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"title\":\"orient\"}}"]}' -C justicechannel
 
 # getCaseInfo : ID
 peer chaincode invoke -n cw -c '{"Args":["getCaseInfo", "case#1"]}' -C justicechannel
