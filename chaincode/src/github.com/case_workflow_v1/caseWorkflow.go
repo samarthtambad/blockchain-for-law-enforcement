@@ -117,7 +117,16 @@ func (c *CaseWorkflowChaincode) registerCase(stub shim.ChaincodeStubInterface, c
 	return shim.Success(nil)
 }
 
+// get current information of case with ID from world state
 func (c *CaseWorkflowChaincode) getCaseInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	// Access control: None, all org in n/w can invoke this transaction
+
+	// verify args: ID
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1: {ID}")
+	}
+
 
 	return shim.Success(nil)
 }
