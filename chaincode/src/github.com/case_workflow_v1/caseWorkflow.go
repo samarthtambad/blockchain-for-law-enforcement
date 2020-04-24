@@ -82,9 +82,17 @@ func (c *CaseWorkflowChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Resp
 // register a case with a unique case number
 func (c *CaseWorkflowChaincode) registerCase(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
 
+	var err error
+
 	// Access control: All Org except Judiciary can invoke this transaction
 	if !c.testMode && authenticateJudiciaryOrg(creatorOrg, creatorCertIssuer) {
 		return shim.Error("Caller a member of Judiciary Org. Access denied.")
+	}
+
+	// verify args: ID, Desc
+	if len(args) != 2 {
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 3: {ID, Description of Case}. Found %d", len(args)))
+		return shim.Error(err.Error())
 	}
 
 	return shim.Success(nil)
