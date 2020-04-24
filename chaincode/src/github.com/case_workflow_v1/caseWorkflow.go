@@ -79,6 +79,17 @@ func (c *CaseWorkflowChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Resp
 	return shim.Error("Invalid invoke function name")
 }
 
+// register a case with a unique case number
+func (c *CaseWorkflowChaincode) registerCase(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
+
+	// Access control: All Org except Judiciary can invoke this transaction
+	if !c.testMode && authenticateJudiciaryOrg(creatorOrg, creatorCertIssuer) {
+		return shim.Error("Caller a member of Judiciary Org. Access denied.")
+	}
+
+	return shim.Success(nil)
+}
+
 func (c *CaseWorkflowChaincode) queryTest(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	//   0
