@@ -17,9 +17,10 @@ type Suspect struct {
 }
 
 type Case struct {
-	Id			int				`json:"id"`			// unique identifier
-	FileDate	time.Time		`json:"file"`		// date of case filing
-	Suspects	[]Suspect		`json:"suspects"`	// suspects involved in the case
-	Evidence	[]EvidenceItem	`json:"evidence"`	// evidence collected not related to a particular suspect
-	Status		CaseStatus		`json:"status"`		// current status of the case
+	Id			int				`json:"id"`				// unique identifier
+	Desc		string			`json:"description"`	// description of the evidence
+	CreatedAt	time.Time		`json:"created"`		// date of case filing
+	Suspects	[]Suspect		`json:"suspects"`		// suspects involved in the case
+	Evidence	[]EvidenceItem	`json:"evidence"`		// evidence collected not related to a particular suspect
+	Status		CaseStatus		`json:"status"`			// current status of the case
 }
