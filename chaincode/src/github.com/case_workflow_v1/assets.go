@@ -10,14 +10,14 @@ type EvidenceItem struct {
 }
 
 type Suspect struct {
-	Id			int				`json:"id"`			// unique identifier
+	Id			string				`json:"id"`			// unique identifier
 	Name		string			`json:"name"`		// suspect's real name
 	Status		SuspectStatus	`json:"status"`		// status of the suspect
 	Evidence	[]EvidenceItem	`json:"evidence"`	// evidence against a particular suspect
 }
 
 type Case struct {
-	Id			int				`json:"id"`				// unique identifier
+	Id			string				`json:"id"`				// unique identifier
 	Title		string			`json:"title"`			// title of the case
 	Desc		string			`json:"description"`	// description of the evidence
 	CreatedAt	time.Time		`json:"created"`		// date of case filing
