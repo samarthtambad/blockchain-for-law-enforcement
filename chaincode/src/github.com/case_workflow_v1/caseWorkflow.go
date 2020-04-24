@@ -2,9 +2,9 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
-
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 )
@@ -79,22 +79,41 @@ func (c *CaseWorkflowChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Resp
 	return shim.Error("Invalid invoke function name")
 }
 
-// register a case with a unique case number
+// register a case. Input: ID, Title, Desc
 func (c *CaseWorkflowChaincode) registerCase(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
 
 	var err error
+	var caseKey string
+	var caseItem *Case
+	var caseItemBytes []byte
 
 	// Access control: All Org except Judiciary can invoke this transaction
 	if !c.testMode && authenticateJudiciaryOrg(creatorOrg, creatorCertIssuer) {
 		return shim.Error("Caller a member of Judiciary Org. Access denied.")
 	}
 
-	// verify args: ID, Desc
-	if len(args) != 2 {
-		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 3: {ID, Description of Case}. Found %d", len(args)))
+	// verify args: ID, Title, Desc
+	if len(args) != 3 {
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 3: {ID, Title, Description of Case}. Found %d", len(args)))
 		return shim.Error(err.Error())
 	}
 
+	// generate bytes for case
+	caseItem = &Case{ Id: args[0], Title: args[1], Desc: args[2] }
+	caseItemBytes, err = json.Marshal(caseItem)
+	if err != nil { return shim.Error("Error marshaling case item structure") }
+
+	// write to world state
+	caseKey, err = getCaseKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	err = stub.PutState(caseKey, caseItemBytes)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	fmt.Printf("Case %s registered\n", args[0])
 	return shim.Success(nil)
 }
 
