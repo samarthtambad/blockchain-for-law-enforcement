@@ -63,12 +63,17 @@ docker exec -it cli bash
 # install the chaincode
 peer chaincode install -p chaincodedev/chaincode/case_workflow_v1 -n cw -v 0
 
+# init
 peer chaincode instantiate -n cw -v 0 -c '{"Args":["init"]}' -C justicechannel
 
-
+# queryTest
 peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"docType\":\"marble\",\"owner\":\"tom\"}}"]}' -C justicechannel
 
+# getCaseInfo : ID
+peer chaincode invoke -n cw -c '{"Args":["getCaseInfo", "case#1"]}' -C justicechannel
 
+# registerCase : ID, Title, Desc
+peer chaincode invoke -n cw -c '{"Args":["registerCase", "case#1", "Murder at the Orient Express", "Murder crime was committed on the Orient Express train"]}' -C justicechannel
 
 
 

@@ -71,8 +71,11 @@ func (c *CaseWorkflowChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Resp
 	}
 
 	function, args := stub.GetFunctionAndParameters()
-	if function == "queryTest" {
-		// Importer requests a trade
+	if function == "registerCase" {
+		return c.registerCase(stub, creatorOrg, creatorCertIssuer, args)
+	} else if function == "getCaseInfo" {
+		return c.getCaseInfo(stub, args)
+	} else if function == "queryTest" {
 		return c.queryTest(stub, args)
 	}
 
