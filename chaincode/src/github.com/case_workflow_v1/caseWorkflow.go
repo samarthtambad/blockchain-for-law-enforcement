@@ -127,6 +127,9 @@ func (c *CaseWorkflowChaincode) registerCase(stub shim.ChaincodeStubInterface, c
 func (c *CaseWorkflowChaincode) addSuspectToCase(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
 
 	var err error
+	var caseKey string
+	var caseItem *Case
+	var caseItemBytes []byte
 
 	// Access control: All Org except Judiciary can invoke this transaction
 	if !c.testMode && authenticateJudiciaryOrg(creatorOrg, creatorCertIssuer) {
@@ -138,6 +141,16 @@ func (c *CaseWorkflowChaincode) addSuspectToCase(stub shim.ChaincodeStubInterfac
 		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 3: {Case ID, Suspect ID, Name of Suspect}. Found %d", len(args)))
 		return shim.Error(err.Error())
 	}
+
+	// get key for case
+	caseKey, err = getCaseKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// get case bytes
+	caseItemBytes, err = stub.GetState(caseKey)
+	if err != nil { return shim.Error("Failed to get state for " + caseKey) }
 
 	return shim.Success(nil)
 }
