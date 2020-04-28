@@ -152,6 +152,24 @@ func (c *CaseWorkflowChaincode) addSuspectToCase(stub shim.ChaincodeStubInterfac
 	caseItemBytes, err = stub.GetState(caseKey)
 	if err != nil { return shim.Error("Failed to get state for " + caseKey) }
 
+	// get case item
+	err = json.Unmarshal(caseItemBytes, &caseItem)
+	if err != nil { return shim.Error("Error unmarshaling case item structure") }
+
+	// create suspect
+	suspect := Suspect{Id: args[1], Name: args[2]}
+	caseItem.Suspects = append(caseItem.Suspects, suspect)
+
+	// write update to world state
+	caseItemBytes, err = json.Marshal(caseItem)
+	if err != nil { return shim.Error("Error marshaling case item structure") }
+	err = stub.PutState(caseKey, caseItemBytes)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	fmt.Printf("Suspect %s added to case %s successfully\n", args[1], args[0])
+
 	return shim.Success(nil)
 }
 
