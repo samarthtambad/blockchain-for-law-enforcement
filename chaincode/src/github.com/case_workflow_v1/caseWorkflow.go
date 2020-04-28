@@ -121,6 +121,12 @@ func (c *CaseWorkflowChaincode) registerCase(stub shim.ChaincodeStubInterface, c
 	return shim.Success(nil)
 }
 
+// add suspect (with unique id) to a list of suspects for a given case number
+func (c *CaseWorkflowChaincode) addSuspectToCase(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
+
+	return shim.Success(nil)
+}
+
 // get current information of case with ID from world state
 func (c *CaseWorkflowChaincode) getCaseInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
