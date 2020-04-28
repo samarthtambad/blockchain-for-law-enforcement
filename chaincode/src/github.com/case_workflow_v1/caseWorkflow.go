@@ -121,12 +121,20 @@ func (c *CaseWorkflowChaincode) registerCase(stub shim.ChaincodeStubInterface, c
 	return shim.Success(nil)
 }
 
-// add suspect (with unique id) to a list of suspects for a given case number
+// add suspect (with unique id) to a list of suspects for a given case number. Input: Case ID, Suspect ID, Name
 func (c *CaseWorkflowChaincode) addSuspectToCase(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
+
+	var err error
 
 	// Access control: All Org except Judiciary can invoke this transaction
 	if !c.testMode && authenticateJudiciaryOrg(creatorOrg, creatorCertIssuer) {
 		return shim.Error("Caller a member of Judiciary Org. Access denied.")
+	}
+
+	// verify args: Case ID, Suspect ID, Name
+	if len(args) != 3 {
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 3: {Case ID, Suspect ID, Name of Suspect}. Found %d", len(args)))
+		return shim.Error(err.Error())
 	}
 
 	return shim.Success(nil)
