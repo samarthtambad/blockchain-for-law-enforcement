@@ -66,16 +66,16 @@ peer chaincode install -p chaincodedev/chaincode/case_workflow_v1 -n cw -v 0
 # init
 peer chaincode instantiate -n cw -v 0 -c '{"Args":["init"]}' -C justicechannel
 
-# queryTest
-peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"id\":\"case#1\"}}"]}' -C justicechannel
-peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"id\":\"case#1\",\"title\":\"Murder at the Orient Express\"}}"]}' -C justicechannel
-peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"title\":\"orient\"}}"]}' -C justicechannel
-
 # getCaseInfo : ID
 peer chaincode invoke -n cw -c '{"Args":["getCaseInfo", "case#1"]}' -C justicechannel
 
 # registerCase : ID, Title, Desc
 peer chaincode invoke -n cw -c '{"Args":["registerCase", "case#1", "Murder at the Orient Express", "Murder crime was committed on the Orient Express train"]}' -C justicechannel
 
+# addSuspectToCase : Case ID, Suspect ID, Name
+peer chaincode invoke -n cw -c '{"Args":["addSuspectToCase", "case#1", "suspect#1", "James Bond"]}' -C justicechannel
 
-
+# queryTest
+peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"id\":\"case#1\"}}"]}' -C justicechannel
+peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"id\":\"case#1\",\"title\":\"Murder at the Orient Express\"}}"]}' -C justicechannel
+peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"title\":\"orient\"}}"]}' -C justicechannel
