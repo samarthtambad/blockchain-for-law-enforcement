@@ -67,8 +67,8 @@ peer chaincode install -p chaincodedev/chaincode/case_workflow_v1 -n cw -v 0
 peer chaincode instantiate -n cw -v 0 -c '{"Args":["init"]}' -C justicechannel
 
 # queryTest
-peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"docType\":\"marble\",\"owner\":\"tom\"}}"]}' -C justicechannel
 peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"id\":\"case#1\"}}"]}' -C justicechannel
+peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"id\":\"case#1\",\"title\":\"orient\"}}"]}' -C justicechannel
 peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"title\":\"orient\"}}"]}' -C justicechannel
 
 # getCaseInfo : ID
