@@ -74,6 +74,8 @@ func (c *CaseWorkflowChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Resp
 	function, args := stub.GetFunctionAndParameters()
 	if function == "registerCase" {
 		return c.registerCase(stub, creatorOrg, creatorCertIssuer, args)
+	} else if function == "addSuspectToCase" {
+		return c.addSuspectToCase(stub, creatorOrg, creatorCertIssuer, args)
 	} else if function == "getCaseInfo" {
 		return c.getCaseInfo(stub, args)
 	} else if function == "queryTest" {
@@ -118,6 +120,56 @@ func (c *CaseWorkflowChaincode) registerCase(stub shim.ChaincodeStubInterface, c
 	}
 
 	fmt.Printf("Case %s registered\n", args[0])
+	return shim.Success(nil)
+}
+
+// add suspect (with unique id) to a list of suspects for a given case number. Input: Case ID, Suspect ID, Name
+func (c *CaseWorkflowChaincode) addSuspectToCase(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
+
+	var err error
+	var caseKey string
+	var caseItem *Case
+	var caseItemBytes []byte
+
+	// Access control: All Org except Judiciary can invoke this transaction
+	if !c.testMode && authenticateJudiciaryOrg(creatorOrg, creatorCertIssuer) {
+		return shim.Error("Caller a member of Judiciary Org. Access denied.")
+	}
+
+	// verify args: Case ID, Suspect ID, Name
+	if len(args) != 3 {
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 3: {Case ID, Suspect ID, Name of Suspect}. Found %d", len(args)))
+		return shim.Error(err.Error())
+	}
+
+	// get key for case
+	caseKey, err = getCaseKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// get case bytes
+	caseItemBytes, err = stub.GetState(caseKey)
+	if err != nil { return shim.Error("Failed to get state for " + caseKey) }
+
+	// get case item
+	err = json.Unmarshal(caseItemBytes, &caseItem)
+	if err != nil { return shim.Error("Error unmarshaling case item structure") }
+
+	// create suspect
+	suspect := Suspect{Id: args[1], Name: args[2]}
+	caseItem.Suspects = append(caseItem.Suspects, suspect)
+
+	// write update to world state
+	caseItemBytes, err = json.Marshal(caseItem)
+	if err != nil { return shim.Error("Error marshaling case item structure") }
+	err = stub.PutState(caseKey, caseItemBytes)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	fmt.Printf("Suspect %s added to case %s successfully\n", args[1], args[0])
+
 	return shim.Success(nil)
 }
 
