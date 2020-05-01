@@ -227,6 +227,20 @@ func (c *CaseWorkflowChaincode) addEvidenceForCase(stub shim.ChaincodeStubInterf
 	err = json.Unmarshal(caseItemBytes, &caseItem)
 	if err != nil { return shim.Error("Error unmarshaling case item structure") }
 
+	// modify case item
+	evidenceItem := EvidenceItem{CreatedAt: time.Now(), Desc: args[2], Type: evidenceType}
+	caseItem.Evidence = append(caseItem.Evidence, evidenceItem)
+
+	// write update to world state
+	caseItemBytes, err = json.Marshal(caseItem)
+	if err != nil { return shim.Error("Error marshaling case item structure") }
+	err = stub.PutState(caseKey, caseItemBytes)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	fmt.Printf("Evidence added to case %s successfully\n", args[0])
+
 	return shim.Success(nil)
 }
 
