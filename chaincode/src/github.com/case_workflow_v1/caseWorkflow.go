@@ -176,6 +176,11 @@ func (c *CaseWorkflowChaincode) addSuspectToCase(stub shim.ChaincodeStubInterfac
 // add evidence to given case number. Input: Case ID,
 func (c *CaseWorkflowChaincode) addEvidenceForCase(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
 
+	// Access control: All Org except Judiciary can invoke this transaction
+	if !c.testMode && authenticateJudiciaryOrg(creatorOrg, creatorCertIssuer) {
+		return shim.Error("Caller a member of Judiciary Org. Access denied.")
+	}
+
 	return shim.Success(nil)
 }
 
