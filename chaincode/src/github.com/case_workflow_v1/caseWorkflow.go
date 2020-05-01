@@ -308,6 +308,16 @@ func (c *CaseWorkflowChaincode) addEvidenceForSuspect(stub shim.ChaincodeStubInt
 	}
 	caseItem.Suspects[suspectIdx].Evidence = append(caseItem.Suspects[suspectIdx].Evidence, evidenceItem)
 
+	// write update to world state
+	caseItemBytes, err = json.Marshal(caseItem)
+	if err != nil { return shim.Error("Error marshaling case item structure") }
+	err = stub.PutState(caseKey, caseItemBytes)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	fmt.Printf("Evidence added to suspect %s in case %s successfully\n", args[1], args[0])
+
 	return shim.Success(nil)
 }
 
