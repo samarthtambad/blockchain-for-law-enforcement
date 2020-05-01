@@ -297,6 +297,17 @@ func (c *CaseWorkflowChaincode) addEvidenceForSuspect(stub shim.ChaincodeStubInt
 	err = json.Unmarshal(caseItemBytes, &caseItem)
 	if err != nil { return shim.Error("Error unmarshaling case item structure") }
 
+	// modify case item
+	evidenceItem := EvidenceItem{CreatedAt: time.Now(), Desc: args[3], Type: evidenceType}
+	var suspectIdx int
+	for i := 0; i < len(caseItem.Suspects); i++ {
+		if caseItem.Suspects[i].Id == args[1] {
+			suspectIdx = i
+			break
+		}
+	}
+	caseItem.Suspects[suspectIdx].Evidence = append(caseItem.Suspects[suspectIdx].Evidence, evidenceItem)
+
 	return shim.Success(nil)
 }
 
