@@ -244,6 +244,12 @@ func (c *CaseWorkflowChaincode) addEvidenceForCase(stub shim.ChaincodeStubInterf
 	return shim.Success(nil)
 }
 
+// add evidence for given suspect number and case number. Input: Case ID, Suspect ID, Type, Desc
+func (c *CaseWorkflowChaincode) addEvidenceForSuspect(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
+
+	return shim.Success(nil)
+}
+
 // get current information of case with ID from world state
 func (c *CaseWorkflowChaincode) getCaseInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
