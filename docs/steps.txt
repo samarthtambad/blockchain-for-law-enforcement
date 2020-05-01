@@ -74,6 +74,13 @@ peer chaincode invoke -n cw -c '{"Args":["registerCase", "case#1", "Murder at th
 
 # addSuspectToCase : Case ID, Suspect ID, Name
 peer chaincode invoke -n cw -c '{"Args":["addSuspectToCase", "case#1", "suspect#1", "James Bond"]}' -C justicechannel
+peer chaincode invoke -n cw -c '{"Args":["addSuspectToCase", "case#1", "suspect#2", "Ruskin Bond"]}' -C justicechannel
+
+# addEvidenceForCase : Case ID, Type, Desc
+peer chaincode invoke -n cw -c '{"Args":["addEvidenceForCase", "case#1", "1", "blood stains were found on the staircase"]}' -C justicechannel
+
+# addEvidenceForSuspect : Case ID, Suspect ID, Type, Desc
+peer chaincode invoke -n cw -c '{"Args":["addEvidenceForSuspect", "case#1", "suspect#1", "1", "DNA of blood sample matches suspect"]}' -C justicechannel
 
 # queryTest
 peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"id\":\"case#1\"}}"]}' -C justicechannel
