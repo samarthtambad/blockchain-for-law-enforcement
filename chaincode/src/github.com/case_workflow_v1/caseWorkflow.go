@@ -244,6 +244,83 @@ func (c *CaseWorkflowChaincode) addEvidenceForCase(stub shim.ChaincodeStubInterf
 	return shim.Success(nil)
 }
 
+// add evidence for given suspect number and case number. Input: Case ID, Suspect ID, Type, Desc
+func (c *CaseWorkflowChaincode) addEvidenceForSuspect(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
+
+	var err error
+	var caseKey string
+	var caseItem *Case
+	var caseItemBytes []byte
+	var evidenceType EvidenceType
+
+	// Access control: All Org except Judiciary can invoke this transaction
+	if !c.testMode && authenticateJudiciaryOrg(creatorOrg, creatorCertIssuer) {
+		return shim.Error("Caller a member of Judiciary Org. Access denied.")
+	}
+
+	// verify args: Case ID, Suspect ID, Type, Desc
+	if len(args) != 4 {
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 4: {Case ID, Suspect ID, Type, Desc}. Found %d", len(args)))
+		return shim.Error(err.Error())
+	}
+
+	// verify evidence type integer
+	evidence, err := strconv.Atoi(args[2])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// verify evidence type
+	evidenceType = EvidenceType(evidence)
+	switch evidenceType {
+	case PhysicalEvidence:
+	case ForensicEvidence:
+	case DigitalEvidence:
+	case DocumentaryEvidence:
+	case DemonstrativeEvidence:
+	case TestimonialEvidence: break
+	default:
+		return shim.Error("Invalid evidence type")
+	}
+
+	// get key for case
+	caseKey, err = getCaseKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// get case bytes
+	caseItemBytes, err = stub.GetState(caseKey)
+	if err != nil { return shim.Error("Failed to get state for " + caseKey) }
+
+	// get case item
+	err = json.Unmarshal(caseItemBytes, &caseItem)
+	if err != nil { return shim.Error("Error unmarshaling case item structure") }
+
+	// modify case item
+	evidenceItem := EvidenceItem{CreatedAt: time.Now(), Desc: args[3], Type: evidenceType}
+	var suspectIdx int
+	for i := 0; i < len(caseItem.Suspects); i++ {
+		if caseItem.Suspects[i].Id == args[1] {
+			suspectIdx = i
+			break
+		}
+	}
+	caseItem.Suspects[suspectIdx].Evidence = append(caseItem.Suspects[suspectIdx].Evidence, evidenceItem)
+
+	// write update to world state
+	caseItemBytes, err = json.Marshal(caseItem)
+	if err != nil { return shim.Error("Error marshaling case item structure") }
+	err = stub.PutState(caseKey, caseItemBytes)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	fmt.Printf("Evidence added to suspect %s in case %s successfully\n", args[1], args[0])
+
+	return shim.Success(nil)
+}
+
 // get current information of case with ID from world state
 func (c *CaseWorkflowChaincode) getCaseInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
