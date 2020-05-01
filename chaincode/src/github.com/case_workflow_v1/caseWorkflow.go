@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
+	"strconv"
 	"time"
 )
 
@@ -173,12 +174,40 @@ func (c *CaseWorkflowChaincode) addSuspectToCase(stub shim.ChaincodeStubInterfac
 	return shim.Success(nil)
 }
 
-// add evidence to given case number. Input: Case ID,
+// add evidence to given case number. Input: Case ID, Type, Desc
 func (c *CaseWorkflowChaincode) addEvidenceForCase(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
+
+	var err error
+	var evidenceType EvidenceType
 
 	// Access control: All Org except Judiciary can invoke this transaction
 	if !c.testMode && authenticateJudiciaryOrg(creatorOrg, creatorCertIssuer) {
 		return shim.Error("Caller a member of Judiciary Org. Access denied.")
+	}
+
+	// verify args: Case ID, Type, Desc
+	if len(args) != 3 {
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 3: {Case ID, Type, Desc}. Found %d", len(args)))
+		return shim.Error(err.Error())
+	}
+
+	// verify evidence type integer
+	evidence, err := strconv.Atoi(args[1])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// verify evidence type
+	evidenceType = EvidenceType(evidence)
+	switch evidenceType {
+	case PhysicalEvidence:
+	case ForensicEvidence:
+	case DigitalEvidence:
+	case DocumentaryEvidence:
+	case DemonstrativeEvidence:
+	case TestimonialEvidence: break
+	default:
+		return shim.Error("Invalid evidence type")
 	}
 
 	return shim.Success(nil)
