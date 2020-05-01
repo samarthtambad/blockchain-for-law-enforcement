@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
+	"strconv"
 	"time"
 )
 
@@ -169,6 +170,76 @@ func (c *CaseWorkflowChaincode) addSuspectToCase(stub shim.ChaincodeStubInterfac
 	}
 
 	fmt.Printf("Suspect %s added to case %s successfully\n", args[1], args[0])
+
+	return shim.Success(nil)
+}
+
+// add evidence to given case number. Input: Case ID, Type, Desc
+func (c *CaseWorkflowChaincode) addEvidenceForCase(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
+
+	var err error
+	var caseKey string
+	var caseItem *Case
+	var caseItemBytes []byte
+	var evidenceType EvidenceType
+
+	// Access control: All Org except Judiciary can invoke this transaction
+	if !c.testMode && authenticateJudiciaryOrg(creatorOrg, creatorCertIssuer) {
+		return shim.Error("Caller a member of Judiciary Org. Access denied.")
+	}
+
+	// verify args: Case ID, Type, Desc
+	if len(args) != 3 {
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 3: {Case ID, Type, Desc}. Found %d", len(args)))
+		return shim.Error(err.Error())
+	}
+
+	// verify evidence type integer
+	evidence, err := strconv.Atoi(args[1])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// verify evidence type
+	evidenceType = EvidenceType(evidence)
+	switch evidenceType {
+	case PhysicalEvidence:
+	case ForensicEvidence:
+	case DigitalEvidence:
+	case DocumentaryEvidence:
+	case DemonstrativeEvidence:
+	case TestimonialEvidence: break
+	default:
+		return shim.Error("Invalid evidence type")
+	}
+
+	// get key for case
+	caseKey, err = getCaseKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// get case bytes
+	caseItemBytes, err = stub.GetState(caseKey)
+	if err != nil { return shim.Error("Failed to get state for " + caseKey) }
+
+	// get case item
+	err = json.Unmarshal(caseItemBytes, &caseItem)
+	if err != nil { return shim.Error("Error unmarshaling case item structure") }
+
+	// modify case item
+	evidenceItem := EvidenceItem{CreatedAt: time.Now(), Desc: args[2], Type: evidenceType}
+	caseItem.Evidence = append(caseItem.Evidence, evidenceItem)
+
+	// write update to world state
+	caseItemBytes, err = json.Marshal(caseItem)
+	if err != nil { return shim.Error("Error marshaling case item structure") }
+	err = stub.PutState(caseKey, caseItemBytes)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	fmt.Printf("Evidence added to case %s successfully\n", args[0])
 
 	return shim.Success(nil)
 }
