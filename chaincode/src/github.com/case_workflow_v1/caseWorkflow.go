@@ -77,6 +77,10 @@ func (c *CaseWorkflowChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Resp
 		return c.registerCase(stub, creatorOrg, creatorCertIssuer, args)
 	} else if function == "addSuspectToCase" {
 		return c.addSuspectToCase(stub, creatorOrg, creatorCertIssuer, args)
+	} else if function == "addEvidenceForCase" {
+		return c.addEvidenceForCase(stub, creatorOrg, creatorCertIssuer, args)
+	} else if function == "addEvidenceForSuspect" {
+		return c.addEvidenceForSuspect(stub, creatorOrg, creatorCertIssuer, args)
 	} else if function == "getCaseInfo" {
 		return c.getCaseInfo(stub, args)
 	} else if function == "queryTest" {
