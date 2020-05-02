@@ -422,6 +422,71 @@ func (c *CaseWorkflowChaincode) getCaseInfo(stub shim.ChaincodeStubInterface, ar
 	return shim.Success(caseItemBytes)
 }
 
+// get current information of suspect with given ID from world state. Input: Case ID, Suspect ID
+func (c *CaseWorkflowChaincode) getSuspectInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	var err error
+	var caseKey, jsonResp string
+	var caseItem *Case
+	var caseItemBytes, suspectItemBytes []byte
+
+	// Access control: None, all org in n/w can invoke this transaction
+
+	// verify args: Case ID, Suspect ID
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2: {Case ID, Suspect ID}")
+	}
+
+	// get current state for case
+	caseKey, err = getCaseKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	caseItemBytes, err = stub.GetState(caseKey)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + caseKey + "\"}"
+		return shim.Error(jsonResp)
+	}
+
+	// handle record not found
+	if len(caseItemBytes) == 0 {
+		jsonResp = "{\"Error\":\"No record found for " + caseKey + "\"}"
+		return shim.Error(jsonResp)
+	}
+
+	// get case item
+	err = json.Unmarshal(caseItemBytes, &caseItem)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Problem unmarshaling case item structure \"}"
+		return shim.Error(jsonResp)
+	}
+
+	// modify suspect status of case item
+	var suspectIdx int
+	found := false
+	for i := 0; i < len(caseItem.Suspects); i++ {
+		if caseItem.Suspects[i].Id == args[1] {
+			suspectIdx = i
+			found = true
+			break
+		}
+	}
+	if !found {		// suspect with given id not found
+		jsonResp = "{\"Error\":\"Suspect" + args[1] + "not found for case" + args[0] + " \"}"
+		shim.Error(jsonResp)
+	}
+
+	// get bytes for suspect
+	suspectItemBytes, err = json.Marshal(caseItem.Suspects[suspectIdx])
+	if err != nil {
+		jsonResp = "{\"Error\":\"Problem marshaling suspect item structure \"}"
+		return shim.Error(jsonResp)
+	}
+
+	fmt.Printf("Query Response:%s\n", string(suspectItemBytes))
+	return shim.Success(suspectItemBytes)
+}
+
 func (c *CaseWorkflowChaincode) queryTest(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	//   0
