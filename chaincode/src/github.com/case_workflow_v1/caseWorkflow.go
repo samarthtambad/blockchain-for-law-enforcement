@@ -487,6 +487,63 @@ func (c *CaseWorkflowChaincode) getSuspectInfo(stub shim.ChaincodeStubInterface,
 	return shim.Success(suspectItemBytes)
 }
 
+// get currently active suspects of given caseID. Input: Case ID
+func (c *CaseWorkflowChaincode) getActiveSuspects(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	var err error
+	var caseKey, jsonResp string
+	var caseItem *Case
+	var caseItemBytes, suspectItemsBytes []byte
+
+	// Access control: None, all org in n/w can invoke this transaction
+
+	// verify args: Case ID
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1: {Case ID}")
+	}
+
+	// get current state for case
+	caseKey, err = getCaseKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	caseItemBytes, err = stub.GetState(caseKey)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + caseKey + "\"}"
+		return shim.Error(jsonResp)
+	}
+
+	// handle record not found
+	if len(caseItemBytes) == 0 {
+		jsonResp = "{\"Error\":\"No record found for " + caseKey + "\"}"
+		return shim.Error(jsonResp)
+	}
+
+	// get case item
+	err = json.Unmarshal(caseItemBytes, &caseItem)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Problem unmarshaling case item structure \"}"
+		return shim.Error(jsonResp)
+	}
+
+	// modify suspect status of case item
+	var activeSuspects []Suspect
+	for i := 0; i < len(caseItem.Suspects); i++ {
+		if caseItem.Suspects[i].Status == UnderInvestigation {
+			activeSuspects = append(activeSuspects, caseItem.Suspects[i])
+		}
+	}
+
+	// get bytes for suspect
+	suspectItemsBytes, err = json.Marshal(activeSuspects)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Problem marshaling suspect items structure \"}"
+		return shim.Error(jsonResp)
+	}
+
+	fmt.Printf("Query Response:%s\n", string(suspectItemsBytes))
+	return shim.Success(suspectItemsBytes)
+}
+
 func (c *CaseWorkflowChaincode) queryTest(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	//   0
