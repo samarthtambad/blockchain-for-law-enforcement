@@ -358,6 +358,22 @@ func (c *CaseWorkflowChaincode) eliminateSuspect(stub shim.ChaincodeStubInterfac
 	err = json.Unmarshal(caseItemBytes, &caseItem)
 	if err != nil { return shim.Error("Error unmarshaling case item structure") }
 
+	// modify suspect status of case item
+	var suspectIdx int
+	found := false
+	for i := 0; i < len(caseItem.Suspects); i++ {
+		if caseItem.Suspects[i].Id == args[1] {
+			suspectIdx = i
+			found = true
+			break
+		}
+	}
+	if !found {		// suspect with given id not found
+		err = errors.New(fmt.Sprintf("Suspect %s not found for case %s", args[1], args[0]))
+		shim.Error(err.Error())
+	}
+	caseItem.Suspects[suspectIdx].Status = Eliminated
+
 	return shim.Success(nil)
 }
 
