@@ -85,6 +85,10 @@ func (c *CaseWorkflowChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Resp
 		return c.eliminateSuspect(stub, creatorOrg, creatorCertIssuer, args)
 	} else if function == "getCaseInfo" {
 		return c.getCaseInfo(stub, args)
+	} else if function == "getSuspectInfo" {
+		return c.getSuspectInfo(stub, args)
+	} else if function == "getActiveSuspects" {
+		return c.getActiveSuspects(stub, args)
 	} else if function == "queryTest" {
 		return c.queryTest(stub, args)
 	}
