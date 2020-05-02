@@ -329,6 +329,9 @@ func (c *CaseWorkflowChaincode) addEvidenceForSuspect(stub shim.ChaincodeStubInt
 func (c *CaseWorkflowChaincode) eliminateSuspect(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
 
 	var err error
+	var caseKey string
+	var caseItem *Case
+	var caseItemBytes []byte
 
 	// Access control: All Org except Judiciary can invoke this transaction
 	if !c.testMode && authenticateJudiciaryOrg(creatorOrg, creatorCertIssuer) {
@@ -340,6 +343,20 @@ func (c *CaseWorkflowChaincode) eliminateSuspect(stub shim.ChaincodeStubInterfac
 		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 2: {Case ID, Suspect ID}. Found %d", len(args)))
 		return shim.Error(err.Error())
 	}
+
+	// get key for case
+	caseKey, err = getCaseKey(stub, args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// get case bytes
+	caseItemBytes, err = stub.GetState(caseKey)
+	if err != nil { return shim.Error("Failed to get state for " + caseKey) }
+
+	// get case item
+	err = json.Unmarshal(caseItemBytes, &caseItem)
+	if err != nil { return shim.Error("Error unmarshaling case item structure") }
 
 	return shim.Success(nil)
 }
