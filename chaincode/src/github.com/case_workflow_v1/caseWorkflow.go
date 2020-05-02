@@ -325,7 +325,7 @@ func (c *CaseWorkflowChaincode) addEvidenceForSuspect(stub shim.ChaincodeStubInt
 	return shim.Success(nil)
 }
 
-// eliminate suspect for given suspect number and case number. Input: Input: Case ID, Suspect ID
+// eliminate suspect for given suspect number and case number. Input: Case ID, Suspect ID
 func (c *CaseWorkflowChaincode) eliminateSuspect(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
 
 	var err error
@@ -374,6 +374,15 @@ func (c *CaseWorkflowChaincode) eliminateSuspect(stub shim.ChaincodeStubInterfac
 	}
 	caseItem.Suspects[suspectIdx].Status = Eliminated
 
+	// write update to world state
+	caseItemBytes, err = json.Marshal(caseItem)
+	if err != nil { return shim.Error("Error marshaling case item structure") }
+	err = stub.PutState(caseKey, caseItemBytes)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	fmt.Printf("Eliminated suspect %s from case %s successfully\n", args[1], args[0])
 	return shim.Success(nil)
 }
 
