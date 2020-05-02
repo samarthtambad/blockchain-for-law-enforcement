@@ -328,9 +328,17 @@ func (c *CaseWorkflowChaincode) addEvidenceForSuspect(stub shim.ChaincodeStubInt
 // eliminate suspect for given suspect number and case number. Input: Input: Case ID, Suspect ID
 func (c *CaseWorkflowChaincode) eliminateSuspect(stub shim.ChaincodeStubInterface, creatorOrg string, creatorCertIssuer string, args[] string) pb.Response {
 
+	var err error
+
 	// Access control: All Org except Judiciary can invoke this transaction
 	if !c.testMode && authenticateJudiciaryOrg(creatorOrg, creatorCertIssuer) {
 		return shim.Error("Caller a member of Judiciary Org. Access denied.")
+	}
+
+	// verify args: Case ID, Suspect ID
+	if len(args) != 2 {
+		err = errors.New(fmt.Sprintf("Incorrect number of arguments. Expecting 2: {Case ID, Suspect ID}. Found %d", len(args)))
+		return shim.Error(err.Error())
 	}
 
 	return shim.Success(nil)
