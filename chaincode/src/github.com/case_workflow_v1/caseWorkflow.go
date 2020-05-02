@@ -392,7 +392,7 @@ func (c *CaseWorkflowChaincode) eliminateSuspect(stub shim.ChaincodeStubInterfac
 	return shim.Success(nil)
 }
 
-// get current information of case with ID from world state
+// get current information of case with ID from world state. Input: Case ID
 func (c *CaseWorkflowChaincode) getCaseInfo(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	var err error
