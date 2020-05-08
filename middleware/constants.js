@@ -38,3 +38,11 @@ var THREE_OF_FOUR_ORG_MEMBERS = {
         '3-of': [{ 'signed-by': 0 }, { 'signed-by': 1 }, { 'signed-by': 2 }]
     }
 };
+
+// no restrictions on endorsement, accept everything
+var ACCEPT_ALL = {
+    identities: [],
+    policy: {
+        '0-of': []
+    }
+};
