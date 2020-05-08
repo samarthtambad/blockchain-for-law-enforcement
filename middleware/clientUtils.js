@@ -82,6 +82,7 @@ var	tlsOptions = {
     verify: false
 };
 
+// create new admin member
 function getMember(username, password, client, userOrg) {
     var caUrl = ORGS[userOrg].ca.url;
 
@@ -255,6 +256,7 @@ function getUserMember(adminUser, adminPassword, client, userOrg, username) {
         });
 }
 
+// retrieve administrator whose credentials were created using cryptogen
 function getAdmin(client, userOrg) {
     var keyPath = path.join(__dirname, util.format(Constants.networkLocation + '/crypto-config/peerOrganizations/%s.trade.com/users/Admin@%s.trade.com/msp/keystore', userOrg, userOrg));
     var keyPEM = Buffer.from(readAllFiles(keyPath)[0]).toString();
