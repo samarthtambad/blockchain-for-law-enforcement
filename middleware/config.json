@@ -11,7 +11,7 @@
       "mspid": "FBIOrgMSP",
       "ca": {
         "url": "https://localhost:7054",
-        "name": "ca_peerFBIOrg"
+        "name": "ca-fbi"
       },
       "peer1": {
         "requests": "grpcs://localhost:7051",
@@ -25,7 +25,7 @@
       "mspid": "NYPDOrgMSP",
       "ca": {
         "url": "https://localhost:8054",
-        "name": "ca_peerNYPDOrg"
+        "name": "ca-nypd"
       },
       "peer1": {
         "requests": "grpcs://localhost:8051",
@@ -39,7 +39,7 @@
       "mspid": "NJSPOrgMSP",
       "ca": {
         "url": "https://localhost:9054",
-        "name": "ca_peerNJSPOrg"
+        "name": "ca-njsp"
       },
       "peer1": {
         "requests": "grpcs://localhost:9051",
@@ -53,7 +53,7 @@
       "mspid": "JudiciaryOrgMSP",
       "ca": {
         "url": "https://localhost:10054",
-        "name": "ca_peerJudiciaryOrg"
+        "name": "ca-judiciary"
       },
       "peer1": {
         "requests": "grpcs://localhost:10051",
