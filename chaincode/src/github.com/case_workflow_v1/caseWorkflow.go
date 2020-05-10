@@ -8,7 +8,6 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"strconv"
-	"time"
 )
 
 type CaseWorkflowChaincode struct {
@@ -116,7 +115,10 @@ func (c *CaseWorkflowChaincode) registerCase(stub shim.ChaincodeStubInterface, c
 	}
 
 	// generate bytes for case
-	caseItem = &Case{ Id: args[0], Title: args[1], Desc: args[2], CreatedAt: time.Now(), Status: Ongoing}
+	caseItem = &Case{ Id: args[0], Title: args[1], Desc: args[2], Status: Ongoing}
+	// IMPORTANT!!!
+	// CreatedAt: time.Now() causing error: [Channel.js]: compareProposalResponseResults - read/writes result sets do not match index=1
+	// do time.now() in the server, not in the chaincode.
 	caseItemBytes, err = json.Marshal(caseItem)
 	if err != nil { return shim.Error("Error marshaling case item structure") }
 
@@ -238,7 +240,10 @@ func (c *CaseWorkflowChaincode) addEvidenceForCase(stub shim.ChaincodeStubInterf
 	if err != nil { return shim.Error("Error unmarshaling case item structure") }
 
 	// modify case item
-	evidenceItem := EvidenceItem{CreatedAt: time.Now(), Desc: args[2], Type: evidenceType}
+	evidenceItem := EvidenceItem{Desc: args[2], Type: evidenceType}
+	// IMPORTANT!!!
+	// CreatedAt: time.Now() causing error: [Channel.js]: compareProposalResponseResults - read/writes result sets do not match index=1
+	// do time.now() in the server, not in the chaincode.
 	caseItem.Evidence = append(caseItem.Evidence, evidenceItem)
 
 	// write update to world state
@@ -308,7 +313,10 @@ func (c *CaseWorkflowChaincode) addEvidenceForSuspect(stub shim.ChaincodeStubInt
 	if err != nil { return shim.Error("Error unmarshaling case item structure") }
 
 	// modify case item
-	evidenceItem := EvidenceItem{CreatedAt: time.Now(), Desc: args[3], Type: evidenceType}
+	evidenceItem := EvidenceItem{Desc: args[3], Type: evidenceType}
+	// IMPORTANT!!!
+	// CreatedAt: time.Now() causing error: [Channel.js]: compareProposalResponseResults - read/writes result sets do not match index=1
+	// do time.now() in the server, not in the chaincode.
 	var suspectIdx int
 	for i := 0; i < len(caseItem.Suspects); i++ {
 		if caseItem.Suspects[i].Id == args[1] {
