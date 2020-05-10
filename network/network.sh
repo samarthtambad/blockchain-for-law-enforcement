@@ -31,7 +31,7 @@ DEV_MODE=false
 # Print the usage message
 function printHelp () {
   echo "Usage: "
-  echo "  network.sh up|down|restart|generate|reset|clean|upgrade|createneworg|startneworg|stopneworg [-c <channel name>] [-f <docker-compose-file>] [-i <imagetag>] [-o <logfile>] [-dev]"
+  echo "  network.sh up|down|restart|generate|reset|clean|upgrade [-c <channel name>] [-f <docker-compose-file>] [-i <imagetag>] [-o <logfile>] [-dev]"
   echo "  network.sh -h|--help (print this message)"
   echo "    <mode> - one of 'up', 'down', 'restart' or 'generate'"
   echo "      - 'up' - bring up the network with docker-compose up"
