@@ -6,13 +6,13 @@
 ```cd $GOPATH/src/blockchain-for-law-enforcement/network```
 
 ##### 2. perform setup (if necessary) and launch the containers.
-```./trade.sh up```
+```./network.sh up```
 
 ##### 3. inspect list of running containers in docker.
 ```docker ps```
 
 ##### 4. stop all running containers
-```./trade.sh down```
+```./network.sh down```
 
 
 ## Launching the network in dev mode
@@ -22,13 +22,13 @@
 ```cd $GOPATH/src/blockchain-for-law-enforcement/network```
 
 ##### 2. stop all running containers
-```./trade.sh down -d true```
+```./network.sh down -d true```
 
 ##### 3. remove all left-over docker containers (if any), "-d true" to specify dev mode
-```./trade.sh clean -d true```
+```./network.sh clean -d true```
 
 ##### 4. launch network in dev mode
-```./trade.sh up -d true```
+```./network.sh up -d true```
 
 Note: Always perform clean after stopping the network
 
