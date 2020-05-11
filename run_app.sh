@@ -57,7 +57,7 @@ echo -e "\nHave now switched to " $(pwd)
 echo -e "\nNow launching createJusticeApp.js "
 node createJusticeApp.js
 
-# echo -e "\nNow launching runJusticeScenarioApp.js "
-# node runJusticeScenarioApp.js
+echo -e "\nNow launching runJusticeAppScenario.js "
+node runJusticeAppScenario.js
 
-echo -e '\nFinished script'
+echo -e '\nFinished demo'
