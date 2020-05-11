@@ -77,7 +77,7 @@ createChannel.createChannel(Constants.CHANNEL_NAME).then(() => {
     console.log('\n');
     ClientUtils.txEventsCleanup();
 
-    return invokeCC.invokeChaincode(Constants.FBI_ORG, Constants.CHAINCODE_VERSION, 'registerCase', ['case#1', 'Murder at the Orient Express','Murder crime was committed on the Orient Express train'], 'FBI');
+    return invokeCC.invokeChaincode(Constants.FBI_ORG, Constants.CHAINCODE_VERSION, 'registerCase', ['case#1', 'Murder at the Orient Express','Murder crime was committed on the Orient Express train'], 'FBI_User');
 }, (err) => {
     console.log('\n');
     console.log('------------------------------');
@@ -94,7 +94,7 @@ createChannel.createChannel(Constants.CHANNEL_NAME).then(() => {
     console.log('------------------------------');
     console.log('\n');
 
-    return queryCC.queryChaincode(Constants.FBI_ORG, Constants.CHAINCODE_VERSION, 'getCaseInfo', ['case#1'], 'FBI');
+    return queryCC.queryChaincode(Constants.FBI_ORG, Constants.CHAINCODE_VERSION, 'getCaseInfo', ['case#1'], 'FBI_User');
 }, (err) => {
     console.log('\n');
     console.log('-----------------------------');
