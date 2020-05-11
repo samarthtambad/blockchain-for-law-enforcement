@@ -609,7 +609,7 @@ func getQueryResultForQueryString(stub shim.ChaincodeStubInterface, queryString 
 
 func main() {
 	ch := new(CaseWorkflowChaincode)
-	ch.testMode = true
+	ch.testMode = false
 	err := shim.Start(ch)
 	if err != nil {
 		fmt.Printf("Error starting Case Workflow chaincode: %s", err)
