@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import axios from "axios"
 export default {
     data() {
         return {
@@ -35,6 +36,9 @@ export default {
         }
     },
     computed: {
+        auth() {
+            return this.$store.getters.userAuth
+        },
         gridDataComputed() {
             var data = this.gridData;
             for(var i = 0; i < data.length; i++) {
@@ -52,33 +56,45 @@ export default {
             return str.charAt(0).toUpperCase() + str.slice(1);
         }
     },
-    methods: {
-        fetchCases() {
-            axios.post('http://localhost:4000/chaincode/queryTest', 
-                {
-                    args: ["{\"selector\": {\"status\": {\"eq\": 0}}}"],
-                    ccversion: "v1"
-                },
-                { headers: {
-                    'Content-type': 'application/json',
-                    'Authorization': 'Bearer {token}'
-                }
-            })
-            .then(response => {
+    mounted() {
+        console.log(this.auth)
+        axios({
+            method: 'get',
+            url: 'http://localhost:4000/chaincode/getCaseInfo',
+            params: {
+                ccversion: "v1",
+                args: ["case#1"] //["{\"selector\": {\"status\": {\"eq\": 0}}}"],
+            },
+            headers: {
+                'Content-type': 'application/json',
+                'Authorization': 'Bearer ' + this.auth.token
+            }
+        })
+        // axios.get('http://localhost:4000/chaincode/getCaseInfo', 
+        //     {
+        //         args: ["case#1"], //["{\"selector\": {\"status\": {\"eq\": 0}}}"],
+        //         ccversion: "v1"
+        //     },
+        //     { headers: {
+        //         'Content-type': 'application/json',
+        //         'Authorization': 'Bearer ' + this.auth.token
+        //     }
+        // })
+        .then(response => {
+            console.log(response)
+
+            if(response.data.success) {
+                console.log("Fetched cases successfully");
+                this.gridData = response.data
+                // this.$router.push('/case')
+            } else {
                 console.log(response)
+            }
 
-                if(response.data.success) {
-                    console.log("Fetched cases successfully");
-                    // this.$router.push('/case')
-                } else {
-                    console.log(response)
-                }
-
-            })
-            .catch(function (error) {
-                console.error(error.response);
-            });
-        }
+        })
+        .catch(function (error) {
+            console.error(error.response);
+        });
     }
 }
 </script>

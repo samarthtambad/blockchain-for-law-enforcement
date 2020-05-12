@@ -288,49 +288,49 @@ app.post('/chaincode/instantiate', async function(req, res) {
 });
 
 // Install new chaincode version on network peers and upgrade it on the channel
-app.post('/chaincode/upgrade', async function(req, res) {
-    logger.debug('==================== UPGRADE CHAINCODE ==================');
-    logger.debug('username :' + req.username);
-    logger.debug('orgname:' + req.orgname);
-    if (req.username !== 'admin') {
-        res.statusCode = 403;
-        res.send('Not an admin user: ' + req.username);
-        return;
-    }
+// app.post('/chaincode/upgrade', async function(req, res) {
+//     logger.debug('==================== UPGRADE CHAINCODE ==================');
+//     logger.debug('username :' + req.username);
+//     logger.debug('orgname:' + req.orgname);
+//     if (req.username !== 'admin') {
+//         res.statusCode = 403;
+//         res.send('Not an admin user: ' + req.username);
+//         return;
+//     }
 
-    var ccpath = req.body.ccpath;
-    if (!ccpath) {
-        res.json(getErrorMessage('\'ccpath\''));
-        return;
-    }
-    var ccversion = req.body.ccversion;
-    if (!ccversion) {
-        res.json(getErrorMessage('\'ccversion\''));
-        return;
-    }
-    var args = req.body.args;
-    if (!args) {
-        res.json(getErrorMessage('\'args\''));
-        return;
-    }
-    logger.debug('args  : ' + args);
+//     var ccpath = req.body.ccpath;
+//     if (!ccpath) {
+//         res.json(getErrorMessage('\'ccpath\''));
+//         return;
+//     }
+//     var ccversion = req.body.ccversion;
+//     if (!ccversion) {
+//         res.json(getErrorMessage('\'ccversion\''));
+//         return;
+//     }
+//     var args = req.body.args;
+//     if (!args) {
+//         res.json(getErrorMessage('\'args\''));
+//         return;
+//     }
+//     logger.debug('args  : ' + args);
 
-    // Update the configuration settings
-    Constants.networkConfig = '../middleware/config_upgrade.json';
-    Constants.TRANSACTION_ENDORSEMENT_POLICY = Constants.ALL_FIVE_ORG_MEMBERS;
+//     // Update the configuration settings
+//     Constants.networkConfig = '../middleware/config_upgrade.json';
+//     Constants.TRANSACTION_ENDORSEMENT_POLICY = Constants.ALL_FIVE_ORG_MEMBERS;
 
-    // Install and then upgrade the chaincode
-    installCC.installChaincode(ccpath, ccversion, Constants).then(() => {
-        return instantiateCC.instantiateOrUpgradeChaincode(req.orgname, ccpath, ccversion, 'init', args, true, Constants);
-    }, (err) => {
-        res.json({success: false, message: err.message});
-    }).then(() => {
-        res.json({success: true, message: 'New version of Chaincode installed and upgraded'});
-    }, (err) => {
-        res.json({success: false, message: err.message});
-    });
-    ClientUtils.txEventsCleanup();
-});
+//     // Install and then upgrade the chaincode
+//     installCC.installChaincode(ccpath, ccversion, Constants).then(() => {
+//         return instantiateCC.instantiateOrUpgradeChaincode(req.orgname, ccpath, ccversion, 'init', args, true, Constants);
+//     }, (err) => {
+//         res.json({success: false, message: err.message});
+//     }).then(() => {
+//         res.json({success: true, message: 'New version of Chaincode installed and upgraded'});
+//     }, (err) => {
+//         res.json({success: false, message: err.message});
+//     });
+//     ClientUtils.txEventsCleanup();
+// });
 
 // Invoke transaction on chaincode on network peers
 app.post('/chaincode/:fcn', async function(req, res) {
@@ -340,8 +340,9 @@ app.post('/chaincode/:fcn', async function(req, res) {
 
     var ccversion = req.body.ccversion;
     if (!ccversion) {
-        res.json(getErrorMessage('\'ccversion\''));
-        return;
+        ccversion = "v1"
+        // res.json(getErrorMessage('\'ccversion\''));
+        // return;
     }
 
     var fcn = req.params.fcn;
@@ -372,8 +373,9 @@ app.get('/chaincode/:fcn', async function(req, res) {
 
     var ccversion = req.body.ccversion;
     if (!ccversion) {
-        res.json(getErrorMessage('\'ccversion\''));
-        return;
+        ccversion = "v1"
+        // res.json(getErrorMessage('\'ccversion\''));
+        // return;
     }
 
     var fcn = req.params.fcn;

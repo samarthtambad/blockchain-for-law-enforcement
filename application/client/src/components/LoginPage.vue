@@ -28,7 +28,6 @@
 </template>
 
 <script>
-// import { mapState, mapActions } from 'vuex'
 import axios from "axios"
 export default {
     data () {
@@ -60,37 +59,30 @@ export default {
                 }
                 })
                 .then(response => {
+                    console.log(response)
 
-                    if(response.data.success) {
-                        console.log("Logged in successfully");
-                        this.$router.push('/cases')
-                    } else {
-                        console.log(response)
+                    if(!response.data.success) {
+                        console.log("Login unsuccessful")
+                        return
                     }
-
-                    // let is_admin = response.data.user.is_admin
-                    // localStorage.setItem('user',JSON.stringify(response.data.user))
-                    // localStorage.setItem('jwt',response.data.token)
-
-                    // if (localStorage.getItem('jwt') != null){
-                    //     this.$emit('loggedIn')
-                    //     if(this.$route.params.nextUrl != null){
-                    //         this.$router.push(this.$route.params.nextUrl)
-                    //     }
-                    //     else {
-                    //         if(is_admin== 1){
-                    //             this.$router.push('admin')
-                    //         }
-                    //         else {
-                    //             this.$router.push('dashboard')
-                    //         }
-                    //     }
-                    // }
+                    console.log("Logged in successfully")
+                    this.storeUserAuth(response)
+                    // this.$store.state.auth.user = this.username
+                    // this.$store.state.auth.secret = response.data.secret
+                    // this.$store.state.auth.token = response.data.token
+                    console.log(this.$store.state.auth)
+                    
+                    this.$router.push('/cases')
                 })
                 .catch(function (error) {
                     console.error(error.response);
                 });
             }
+        },
+        storeUserAuth(response) {
+            this.$store.state.auth.user = this.username
+            this.$store.state.auth.secret = response.data.secret
+            this.$store.state.auth.token = response.data.token
         }
     }
 };
