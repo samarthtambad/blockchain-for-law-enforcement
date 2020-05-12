@@ -44,32 +44,8 @@ sleep 15
 
 # launch the application server and listen for API requests
 
-cd $GOPATH/src/blockchain-for-law-enforcement/application/server
+cd $GOPATH/src/blockchain-for-law-enforcement/application
 echo -e "\nHave now switched to " $(pwd)
 
 echo -e "\nNow launching app.js "
-node app.js &
-
-sleep 15
-
-# setup the network, create/join channel, install/instantiate chaincode, etc
-
-cd $GOPATH/src/blockchain-for-law-enforcement/application/client_scripts
-echo -e "\nHave now switched to " $(pwd)
-
-./adminLogin.sh
-./createChannel.sh
-./joinChannel.sh
-./installChaincode.sh
-./instantiateChaincode.sh
-./invoke_registerCase.sh
-
-sleep 15
-
-# launch vuejs server for serving the user interface
-
-cd $GOPATH/src/blockchain-for-law-enforcement/client
-echo -e "\nHave now switched to " $(pwd)
-
-echo -e "\nNow launching main.js "
-./node_modules/.bin/vue-cli-service serve
+node app.js

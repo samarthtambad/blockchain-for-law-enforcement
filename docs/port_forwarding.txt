@@ -2,7 +2,7 @@
 
 sudo ssh \
       -i /var/root/Library/Application\ Support/multipassd/ssh-keys/id_rsa \
-      -L 9000:127.0.0.1:8000 \
+      -L 9000:127.0.0.1:8080 \
       ubuntu@192.168.64.3
 
 
