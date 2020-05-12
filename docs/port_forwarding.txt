@@ -1,0 +1,12 @@
+# use the command below to setup port forwarding from instance port of 8000 to host's port of 9000
+
+sudo ssh \
+      -i /var/root/Library/Application\ Support/multipassd/ssh-keys/id_rsa \
+      -L 9000:127.0.0.1:8000 \
+      ubuntu@192.168.64.3
+
+
+sudo ssh \
+      -i /var/root/Library/Application\ Support/multipassd/ssh-keys/id_rsa \
+      -L 4000:127.0.0.1:4000 \
+      ubuntu@192.168.64.3
