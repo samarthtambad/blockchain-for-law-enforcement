@@ -95,3 +95,6 @@ peer chaincode invoke -n cw -c '{"Args":["getActiveSuspects", "case#1"]}' -C jus
 peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"id\":\"case#1\"}}"]}' -C justicechannel
 peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"id\":\"case#1\",\"title\":\"Murder at the Orient Express\"}}"]}' -C justicechannel
 peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"title\":\"orient\"}}"]}' -C justicechannel
+
+
+peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\": {\"status\": {\"eq\": 0}}}"]}' -C justicechannel
