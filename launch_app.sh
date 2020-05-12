@@ -44,7 +44,7 @@ sleep 15
 
 # launch the application server and listen for API requests
 
-cd $GOPATH/src/blockchain-for-law-enforcement/application
+cd $GOPATH/src/blockchain-for-law-enforcement/application/server
 echo -e "\nHave now switched to " $(pwd)
 
 echo -e "\nNow launching app.js "
@@ -54,7 +54,7 @@ sleep 15
 
 # setup the network, create/join channel, install/instantiate chaincode, etc
 
-cd $GOPATH/src/blockchain-for-law-enforcement/application/client_scripts
+cd $GOPATH/src/blockchain-for-law-enforcement/application/scripts
 echo -e "\nHave now switched to " $(pwd)
 
 ./adminLogin.sh
