@@ -126,7 +126,7 @@ func (c *CaseWorkflowChaincode) registerCase(stub shim.ChaincodeStubInterface, c
 	// generate bytes for case
 	// IMPORTANT!!!
 	// CreatedAt: time.Now() causing error: [Channel.js]: compareProposalResponseResults - read/writes result sets do not match index=1
-	// do not use time.now() in the chaincode.
+	// do not use time.now() in the chaincode assets.
 	t, err := time.Parse(time.RFC3339, "2020-05-22T17:15:41+00:00")
 	caseItem = &Case{ Id: args[0], Title: args[1], CreatedAt: t, Desc: args[2], Status: Ongoing}
 	caseItemBytes, err = json.Marshal(caseItem)
@@ -248,7 +248,7 @@ func (c *CaseWorkflowChaincode) addEvidenceForCase(stub shim.ChaincodeStubInterf
 	// modify case item
 	// IMPORTANT!!!
 	// CreatedAt: time.Now() causing error: [Channel.js]: compareProposalResponseResults - read/writes result sets do not match index=1
-	// do time.now() in the server, not in the chaincode.
+	// do not use time.now() in the chaincode assets.
 	t, err := time.Parse(time.RFC3339, "2020-05-22T17:15:41+00:00")
 	evidenceItem := EvidenceItem{Desc: args[2], Type: evidenceType, CreatedAt: t}
 	caseItem.Evidence = append(caseItem.Evidence, evidenceItem)
@@ -322,7 +322,7 @@ func (c *CaseWorkflowChaincode) addEvidenceForSuspect(stub shim.ChaincodeStubInt
 	// modify case item
 	// IMPORTANT!!!
 	// CreatedAt: time.Now() causing error: [Channel.js]: compareProposalResponseResults - read/writes result sets do not match index=1
-	// do time.now() in the server, not in the chaincode.
+	// do not use time.now() in the chaincode assets.
 	t, err := time.Parse(time.RFC3339, "2020-05-22T17:15:41+00:00")
 	evidenceItem := EvidenceItem{Desc: args[3], Type: evidenceType, CreatedAt: t}
 	var suspectIdx int
