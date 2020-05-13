@@ -8,6 +8,7 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"strconv"
+	"time"
 )
 
 type CaseWorkflowChaincode struct {
@@ -114,19 +115,24 @@ func (c *CaseWorkflowChaincode) registerCase(stub shim.ChaincodeStubInterface, c
 		return shim.Error(err.Error())
 	}
 
-	// generate bytes for case
-	caseItem = &Case{ Id: args[0], Title: args[1], Desc: args[2], Status: Ongoing}
-	// IMPORTANT!!!
-	// CreatedAt: time.Now() causing error: [Channel.js]: compareProposalResponseResults - read/writes result sets do not match index=1
-	// do time.now() in the server, not in the chaincode.
-	caseItemBytes, err = json.Marshal(caseItem)
-	if err != nil { return shim.Error("Error marshaling case item structure") }
-
-	// write to world state
+	// check if case with id already exists
 	caseKey, err = getCaseKey(stub, args[0])
 	if err != nil {
 		return shim.Error(err.Error())
 	}
+	caseItemBytes, err = stub.GetState(caseKey)
+	if err != nil { return shim.Error("Failed to get state for " + caseKey) }
+
+	// generate bytes for case
+	// IMPORTANT!!!
+	// CreatedAt: time.Now() causing error: [Channel.js]: compareProposalResponseResults - read/writes result sets do not match index=1
+	// do not use time.now() in the chaincode.
+	t, err := time.Parse(time.RFC3339, "2020-05-22T17:15:41+00:00")
+	caseItem = &Case{ Id: args[0], Title: args[1], CreatedAt: t, Desc: args[2], Status: Ongoing}
+	caseItemBytes, err = json.Marshal(caseItem)
+	if err != nil { return shim.Error("Error marshaling case item structure") }
+
+	// write to world state
 	err = stub.PutState(caseKey, caseItemBytes)
 	if err != nil {
 		return shim.Error(err.Error())
@@ -240,10 +246,11 @@ func (c *CaseWorkflowChaincode) addEvidenceForCase(stub shim.ChaincodeStubInterf
 	if err != nil { return shim.Error("Error unmarshaling case item structure") }
 
 	// modify case item
-	evidenceItem := EvidenceItem{Desc: args[2], Type: evidenceType}
 	// IMPORTANT!!!
 	// CreatedAt: time.Now() causing error: [Channel.js]: compareProposalResponseResults - read/writes result sets do not match index=1
 	// do time.now() in the server, not in the chaincode.
+	t, err := time.Parse(time.RFC3339, "2020-05-22T17:15:41+00:00")
+	evidenceItem := EvidenceItem{Desc: args[2], Type: evidenceType, CreatedAt: t}
 	caseItem.Evidence = append(caseItem.Evidence, evidenceItem)
 
 	// write update to world state
@@ -313,10 +320,11 @@ func (c *CaseWorkflowChaincode) addEvidenceForSuspect(stub shim.ChaincodeStubInt
 	if err != nil { return shim.Error("Error unmarshaling case item structure") }
 
 	// modify case item
-	evidenceItem := EvidenceItem{Desc: args[3], Type: evidenceType}
 	// IMPORTANT!!!
 	// CreatedAt: time.Now() causing error: [Channel.js]: compareProposalResponseResults - read/writes result sets do not match index=1
 	// do time.now() in the server, not in the chaincode.
+	t, err := time.Parse(time.RFC3339, "2020-05-22T17:15:41+00:00")
+	evidenceItem := EvidenceItem{Desc: args[3], Type: evidenceType, CreatedAt: t}
 	var suspectIdx int
 	for i := 0; i < len(caseItem.Suspects); i++ {
 		if caseItem.Suspects[i].Id == args[1] {
