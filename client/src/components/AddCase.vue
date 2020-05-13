@@ -1,23 +1,25 @@
 <template>
     <div>
         <h2> Add Case </h2>
-        <form>
-            <div class="form-group">
-                <label for="id">ID</label>
-                <input type="text" v-model="id" name="id" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label for="title">Title</label>
-                <input type="text" v-model="title" name="title" class="form-control" />
-            </div> 
-            <div class="form-group">
-                <label for="desc">Description</label>
-                <input type="text" v-model="desc" name="desc" class="form-control" />
-            </div>
-            <div class="form-group">
-                <button type="submit" @click="addCase" class="btn btn-primary">Add Case</button>
-            </div>
-        </form>
+        <div class="form-container">
+            <form>
+                <div class="form-group">
+                    <label for="id">ID</label>
+                    <input type="text" v-model="id" name="id" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" v-model="title" name="title" class="form-control" />
+                </div> 
+                <div class="form-group">
+                    <label for="desc">Description</label>
+                    <input type="text" v-model="desc" name="desc" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <button type="submit" @click="addCase" class="btn btn-primary">Add Case</button>
+                </div>
+            </form>
+        </div>
     </div>
 </template>
 
@@ -73,6 +75,15 @@ button {
     padding: 5px;
     border-radius: 5px;
     margin: 10px;
+}
+form {
+    display: table-caption;
+}
+.form-container{
+    display: inline-block;
+}
+.form-group{
+    padding: 5px;
 }
 h1, h2 {
     font-weight: normal;
