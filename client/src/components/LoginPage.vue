@@ -21,7 +21,6 @@
             </div>
             <div class="form-group">
                 <button type="submit" @click="handleSubmit" class="btn btn-primary">Login</button>
-                <!-- <router-link to="/cases" class="btn btn-link">Register</router-link> -->
             </div>
         </form>
     </div>
@@ -89,6 +88,11 @@ export default {
 </script>
 
 <style scoped>
+button {
+    padding: 5px;
+    border-radius: 5px;
+    margin: 10px;
+}
 h1, h2 {
     font-weight: normal;
 }
