@@ -53,8 +53,19 @@ export default {
         caseDataComputed() {
             var data = this.caseData;
             data.status = (data.status === 0)? "Ongoing" : "Closed"
-            // data.suspects = (data.suspects == null)? 0 : data[i].suspects;
-            // data.evidence = (data.evidence == null)? 0 : data[i].evidence;
+            
+            var suspects = ""
+            if(data.suspects != null) {
+                for(var i = 0; i < data.suspects.length; i++) {
+                    suspects += data.suspects[i].name + " \n"
+                }
+            }
+            data.suspects = suspects
+
+            if(data.evidence != null) {
+                data.evidence = data.evidence.length
+            }
+
             if(data.created.length > 20){
                 data.created = data.created.substring(0, 20)
             }

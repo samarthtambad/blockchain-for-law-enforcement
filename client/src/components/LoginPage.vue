@@ -1,28 +1,29 @@
 <template>
     <div>
         <h2>Login</h2>
-        <form>
-            <div class="form-group">
-                <label for="organisation">Organisation</label>
-                <select v-model="orgName">
-                    <option v-for="organisation in organisations" v-bind:value="organisation.value">
-                        {{ organisation.text }}
-                    </option>
-                </select>
-                <span>Selected: {{ orgName }}</span>
-            </div> 
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" v-model="username" name="username" class="form-control" />
-            </div> 
-            <div class="form-group">
-                <label htmlFor="password">Password</label>
-                <input type="password" v-model="password" name="password" />
-            </div>
-            <div class="form-group">
-                <button type="submit" @click="handleSubmit" class="btn btn-primary">Login</button>
-            </div>
-        </form>
+        <div class="form-container">
+            <form>
+                <div class="form-group">
+                    <label for="organisation">Organisation</label>
+                    <select v-model="orgName">
+                        <option v-for="organisation in organisations" v-bind:value="organisation.value" :key="organisation.value">
+                            {{ organisation.text }}
+                        </option>
+                    </select>
+                </div> 
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" v-model="username" name="username" class="form-control" />
+                </div> 
+                <div class="form-group">
+                    <label htmlFor="password">Password</label>
+                    <input type="password" v-model="password" name="password" />
+                </div>
+                <div class="form-group">
+                    <button type="submit" @click="handleSubmit" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
     </div>
 </template>
 
@@ -92,6 +93,15 @@ button {
     padding: 5px;
     border-radius: 5px;
     margin: 10px;
+}
+form {
+    display: table-caption;
+}
+.form-container{
+    display: inline-block;
+}
+.form-group{
+    padding: 10px;
 }
 h1, h2 {
     font-weight: normal;
