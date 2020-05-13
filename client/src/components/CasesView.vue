@@ -1,7 +1,9 @@
 <template>
     <div>
         <h2> List of Cases </h2>
-        <button @click="addCase"> Add Case </button>
+        <div>
+            <button @click="addCase"> Add Case </button>
+        </div>
         <table>
             <thead>
                 <tr>
@@ -97,6 +99,11 @@ export default {
 </script>
 
 <style scoped>
+button {
+    padding: 5px;
+    border-radius: 5px;
+    margin: 10px;
+}
 table {
   border: 2px solid #42b983;
   border-radius: 3px;

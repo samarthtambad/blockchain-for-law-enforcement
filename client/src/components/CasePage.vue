@@ -1,7 +1,9 @@
 <template>
     <div>
         <h2> Case {{ this.caseDataComputed.id }} </h2>
-        <button @click="addSuspect"> Add Suspect </button>
+        <div>
+            <button @click="addSuspect"> Add Suspect </button>
+        </div>
         <table>
             <tbody>
                 <tr> <td> Title </td> <td> {{ this.caseDataComputed.title }} </td> </tr>
@@ -41,7 +43,7 @@ export default {
     methods: {
         addSuspect(e) {
             e.preventDefault()
-            this.$router.push('/addSuspect')
+            this.$router.push(this.$route.path + '/addSuspect')
         }
     },
     computed: {
@@ -92,6 +94,11 @@ export default {
 </script>
 
 <style scoped>
+button {
+    padding: 5px;
+    border-radius: 5px;
+    margin: 10px;
+}
 table {
   border: 2px solid #42b983;
   border-radius: 3px;
