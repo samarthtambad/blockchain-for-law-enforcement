@@ -112,9 +112,9 @@ func (c *CaseWorkflowChaincode) registerCase(stub shim.ChaincodeStubInterface, c
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-	caseItemBytes, err = stub.GetState(caseKey)
-	if err != nil { return shim.Error("Failed to get state for " + caseKey) }
-	if len(caseItemBytes) != 0 { return shim.Error("Case with that id already exists") }
+	//caseItemBytes, err = stub.GetState(caseKey)
+	//if err != nil { return shim.Error("Failed to get state for " + caseKey) }
+	//if len(caseItemtes) != 0 { return shim.Error("Case with that id already exists") }
 
 	// generate bytes for case
 	// IMPORTANT!!!
