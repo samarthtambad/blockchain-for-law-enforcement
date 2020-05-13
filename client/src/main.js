@@ -7,9 +7,8 @@ import App from './App.vue'
 import LoginPage from './components/LoginPage.vue'
 import CasesView from './components/CasesView.vue'
 import CasePage from './components/CasePage.vue'
-
-// import app state store
-// import store from './store.js'
+import AddCase from './components/AddCase.vue'
+import AddSuspect from './components/AddSuspect.vue'
 
 Vue.use(Vuex)
 Vue.use(VueRouter)
@@ -18,7 +17,9 @@ Vue.config.productionTip = false
 const routes = [
   { path: '/', component: LoginPage },
   { path: '/cases', component: CasesView },
-  { path: '/case/:caseId', component: CasePage },
+  { path: '/addCase', component: AddCase, props: true },
+  { path: '/case/:caseId', component: CasePage, props: true },
+  { path: '/case/:caseId/addSuspect', component: AddSuspect, props: true },
   
   // otherwise redirect to home
   { path: '*', redirect: '/' }
