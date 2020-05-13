@@ -7,17 +7,16 @@
         <table>
             <thead>
                 <tr>
-                    <th v-for="key in gridColumns">
+                    <th v-for="key in gridColumns" :key="key">
                     {{ key | capitalize }}
-                        <!-- <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
-                        </span> -->
                     </th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="entry in gridDataComputed">
-                    <td v-for="key in gridColumns">
-                        {{entry[key]}}
+                <tr v-for="entry in gridDataComputed" :key="entry.id">
+                    <td v-for="(key, idx) in gridColumns" :key="key">
+                        <router-link v-if="idx == 0" key="1" class="nav-link" :to="'/case/{{entry[key]}}'"> {{ entry[key] }}</router-link>
+                        <div key="2" v-else> {{entry[key]}} </div>
                     </td>
                 </tr>
             </tbody>
