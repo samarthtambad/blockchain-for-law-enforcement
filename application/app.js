@@ -196,32 +196,6 @@ app.post('/channel/join', async function(req, res) {
     });
 });
 
-// Add an Organization and Peer to the Channel
-// app.post('/channel/addorg', async function(req, res) {
-//     logger.info('<<<<<<<<<<<<<<<<< A D D  O R G  A N D  P E E R  T O  C H A N N E L >>>>>>>>>>>>>>>>>');
-//     if (req.username !== 'admin') {
-//         res.statusCode = 403;
-//         res.send('Not an admin user: ' + req.username);
-//         return;
-//     }
-//
-//     // Update the channel configuration, and then join the new org's peer to the channel
-//     upgradeChannel.upgradeChannel(Constants.CHANNEL_NAME).then(() => {
-//         // Update the configuration settings
-//         Constants.networkConfig = '../middleware/config_upgrade.json';
-//         var Client = require('fabric-client');
-//         Client.addConfigFile(path.join(__dirname, Constants.networkConfig));
-//         var ORGS = Client.getConfigSetting(Constants.networkId);
-//         return joinChannel.joinChannel('exportingentityorg', ORGS, Constants);
-//     }, (err) => {
-//         res.json({success: false, message: err.message});
-//     }).then(() => {
-//         res.json({success: true, message: 'New Organization and Peer Added to Channel'});
-//     }, (err) => {
-//         res.json({success: false, message: err.message});
-//     });
-// });
-
 // Install chaincode on target peers
 app.post('/chaincode/install', async function(req, res) {
     logger.debug('==================== INSTALL CHAINCODE ==================');
@@ -287,53 +261,9 @@ app.post('/chaincode/instantiate', async function(req, res) {
     ClientUtils.txEventsCleanup();
 });
 
-// Install new chaincode version on network peers and upgrade it on the channel
-app.post('/chaincode/upgrade', async function(req, res) {
-    logger.debug('==================== UPGRADE CHAINCODE ==================');
-    logger.debug('username :' + req.username);
-    logger.debug('orgname:' + req.orgname);
-    if (req.username !== 'admin') {
-        res.statusCode = 403;
-        res.send('Not an admin user: ' + req.username);
-        return;
-    }
-
-    var ccpath = req.body.ccpath;
-    if (!ccpath) {
-        res.json(getErrorMessage('\'ccpath\''));
-        return;
-    }
-    var ccversion = req.body.ccversion;
-    if (!ccversion) {
-        res.json(getErrorMessage('\'ccversion\''));
-        return;
-    }
-    var args = req.body.args;
-    if (!args) {
-        res.json(getErrorMessage('\'args\''));
-        return;
-    }
-    logger.debug('args  : ' + args);
-
-    // Update the configuration settings
-    Constants.networkConfig = '../middleware/config_upgrade.json';
-    Constants.TRANSACTION_ENDORSEMENT_POLICY = Constants.ALL_FIVE_ORG_MEMBERS;
-
-    // Install and then upgrade the chaincode
-    installCC.installChaincode(ccpath, ccversion, Constants).then(() => {
-        return instantiateCC.instantiateOrUpgradeChaincode(req.orgname, ccpath, ccversion, 'init', args, true, Constants);
-    }, (err) => {
-        res.json({success: false, message: err.message});
-    }).then(() => {
-        res.json({success: true, message: 'New version of Chaincode installed and upgraded'});
-    }, (err) => {
-        res.json({success: false, message: err.message});
-    });
-    ClientUtils.txEventsCleanup();
-});
-
 // Invoke transaction on chaincode on network peers
 app.post('/chaincode/:fcn', async function(req, res) {
+    logger.info(req)
     logger.debug('==================== INVOKE ON CHAINCODE ==================');
     logger.debug('username :' + req.username);
     logger.debug('orgname:' + req.orgname);
@@ -366,6 +296,38 @@ app.post('/chaincode/:fcn', async function(req, res) {
 
 // Query on chaincode on network peers
 app.get('/chaincode/:fcn', async function(req, res) {
+    logger.debug('==================== QUERY BY CHAINCODE ==================');
+    logger.debug('username :' + req.username);
+    logger.debug('orgname:' + req.orgname);
+
+    var ccversion = req.body.ccversion;
+    if (!ccversion) {
+        res.json(getErrorMessage('\'ccversion\''));
+        return;
+    }
+
+    var fcn = req.params.fcn;
+    var args = req.body.args;
+    if (!fcn) {
+        res.json(getErrorMessage('\'fcn\''));
+        return;
+    }
+    if (!args) {
+        res.json(getErrorMessage('\'args\''));
+        return;
+    }
+    logger.debug('args  : ' + args);
+
+    queryCC.queryChaincode(req.orgname, ccversion, fcn, args).then((result) => {
+        res.json({success: true, message: result});
+    }, (err) => {
+        res.json({success: false, message: err.message});
+    });
+    ClientUtils.txEventsCleanup();
+});
+
+// Query on chaincode on network peers
+app.post('/chaincode/query/:fcn', async function(req, res) {
     logger.debug('==================== QUERY BY CHAINCODE ==================');
     logger.debug('username :' + req.username);
     logger.debug('orgname:' + req.orgname);
