@@ -176,6 +176,13 @@ func (c *CaseWorkflowChaincode) addSuspectToCase(stub shim.ChaincodeStubInterfac
 	err = json.Unmarshal(caseItemBytes, &caseItem)
 	if err != nil { return shim.Error("Error unmarshaling case item structure") }
 
+	// check if suspect with id already exists
+	for i := 0; i < len(caseItem.Suspects); i++ {
+		if caseItem.Suspects[i].Id == args[1] {
+			return shim.Error("Suspect with that id already exists")
+		}
+	}
+
 	// create suspect
 	suspect := Suspect{Id: args[1], Name: args[2]}
 	caseItem.Suspects = append(caseItem.Suspects, suspect)
