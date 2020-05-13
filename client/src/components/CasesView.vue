@@ -1,6 +1,7 @@
 <template>
     <div>
         <h2> List of Cases </h2>
+        <button @click="addCase"> Add Case </button>
         <table>
             <thead>
                 <tr>
@@ -35,6 +36,12 @@ export default {
             ]
         }
     },
+    methods: {
+        addCase(e) {
+            e.preventDefault()
+            this.$router.push('/addCase')
+        }
+    },
     computed: {
         auth() {
             return this.$store.getters.userAuth
@@ -42,8 +49,8 @@ export default {
         gridDataComputed() {
             var data = this.gridData;
             for(var i = 0; i < data.length; i++) {
-                data[i].suspects = (Object.entries(data[i].suspects).length === 0)? 0 : data[i].suspects.length;
-                data[i].evidence = (Object.entries(data[i].evidence).length === 0)? 0 : data[i].evidence.length;
+                data[i].suspects = (data[i].suspects == null)? 0 : data[i].suspects.length;
+                data[i].evidence = (data[i].evidence == null)? 0 : data[i].evidence.length;
                 if(data[i].created.length > 20){
                     data[i].created = data[i].created.substring(0, 20)
                 }
@@ -58,34 +65,24 @@ export default {
     },
     mounted() {
         console.log(this.auth)
-        axios({
-            method: 'get',
-            url: 'http://localhost:4000/chaincode/getCaseInfo',
-            params: {
-                ccversion: "v1",
-                args: ["case#1"] //["{\"selector\": {\"status\": {\"eq\": 0}}}"],
+        axios.post('http://localhost:4000/chaincode/query/getCaseInfo', 
+            {
+                args: ["case#1"],
+                ccversion: "v1"
             },
-            headers: {
+            { headers: {
                 'Content-type': 'application/json',
                 'Authorization': 'Bearer ' + this.auth.token
             }
         })
-        // axios.get('http://localhost:4000/chaincode/getCaseInfo', 
-        //     {
-        //         args: ["case#1"], //["{\"selector\": {\"status\": {\"eq\": 0}}}"],
-        //         ccversion: "v1"
-        //     },
-        //     { headers: {
-        //         'Content-type': 'application/json',
-        //         'Authorization': 'Bearer ' + this.auth.token
-        //     }
-        // })
         .then(response => {
             console.log(response)
 
             if(response.data.success) {
                 console.log("Fetched cases successfully");
-                this.gridData = response.data
+                var caseData = JSON.parse(response.data.message)
+                console.log(caseData)
+                this.gridData.push(caseData)
                 // this.$router.push('/case')
             } else {
                 console.log(response)
