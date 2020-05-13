@@ -98,3 +98,6 @@ peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\":{\"title\":
 
 
 peer chaincode invoke -n cw -c '{"Args":["queryTest", "{\"selector\": {\"status\": {\"eq\": 0}}}"]}' -C justicechannel
+
+
+peer chaincode invoke -n cw -c '{"Args":["fetchAllCases"]}' -C justicechannel

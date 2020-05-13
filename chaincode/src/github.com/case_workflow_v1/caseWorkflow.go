@@ -44,16 +44,6 @@ func (c *CaseWorkflowChaincode) Init(stub shim.ChaincodeStubInterface) pb.Respon
 	fmt.Printf("Police Org 3: %s\n", args[2])
 	fmt.Printf("Judiciary: %s\n", args[3])
 
-	// Map participant identities to their roles on the ledger ?
-	//roleKeys := []string{expKey, ebKey, expBalKey, impKey, ibKey, impBalKey, carKey, raKey, lenKey, lenBalKey}
-	//for i, roleKey := range roleKeys {
-	//	err = stub.PutState(roleKey, []byte(args[i]))
-	//	if err != nil {
-	//		fmt.Errorf("Error recording key %s: %s\n", roleKey, err.Error())
-	//		return shim.Error(err.Error())
-	//	}
-	//}
-
 	return shim.Success(nil)
 }
 
@@ -85,6 +75,8 @@ func (c *CaseWorkflowChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Resp
 		return c.eliminateSuspect(stub, creatorOrg, creatorCertIssuer, args)
 	} else if function == "getCaseInfo" {
 		return c.getCaseInfo(stub, args)
+	} else if function == "fetchAllCases" {
+		return c.fetchAllCases(stub, args)
 	} else if function == "getSuspectInfo" {
 		return c.getSuspectInfo(stub, args)
 	} else if function == "getActiveSuspects" {
@@ -448,6 +440,57 @@ func (c *CaseWorkflowChaincode) getCaseInfo(stub shim.ChaincodeStubInterface, ar
 
 	fmt.Printf("Query Response:%s\n", string(caseItemBytes))
 	return shim.Success(caseItemBytes)
+}
+
+// get info for all cases. Input: None
+func (c *CaseWorkflowChaincode) fetchAllCases(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	var err error
+	var jsonResp string
+
+	// Access control: None, all org in n/w can invoke this transaction
+
+	resultsIterator, err := stub.GetStateByPartialCompositeKey("Case", []string{"c"})
+	defer resultsIterator.Close()
+
+	if err != nil {
+		jsonResp = "{\"Error\":\"Problem with fetching cases by GetStateByPartialCompositeKey\"}"
+		return shim.Error(jsonResp)
+	}
+
+	i := 0
+
+	// buffer is a JSON array containing QueryRecords
+	var buffer bytes.Buffer
+	buffer.WriteString("[")
+	bArrayMemberAlreadyWritten := false
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			jsonResp = "{\"Error\":\"Problem parsing result iterator\"}"
+			return shim.Error(jsonResp)
+		}
+		// Add a comma before array members, suppress it for the first array member
+		if bArrayMemberAlreadyWritten == true {
+			buffer.WriteString(",")
+		}
+		buffer.WriteString("{\"Key\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(queryResponse.Key)
+		buffer.WriteString("\"")
+		buffer.WriteString(", \"Record\":")
+		// Record is a JSON object, so we write as-is
+		buffer.WriteString(string(queryResponse.Value))
+		buffer.WriteString("}")
+		bArrayMemberAlreadyWritten = true
+		i++
+	}
+	buffer.WriteString("]")
+
+	fmt.Printf("Number of Records: %d", i)
+	fmt.Printf("- getQueryResultForQueryString queryResult:\n%s\n", buffer.String())
+
+	return shim.Success(buffer.Bytes())
 }
 
 // get current information of suspect with given ID from world state. Input: Case ID, Suspect ID
